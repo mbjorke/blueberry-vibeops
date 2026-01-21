@@ -1,0 +1,17 @@
+# Ignore false positives from example files
+.env.example
+*.example
+*.sample
+**/examples/**
+**/samples/**
+
+# Ignore test files with mock data
+**/*.test.*
+**/*.spec.*
+**/test/**
+**/tests/**
+**/__tests__/**
+
+# Ignore documentation
+**/*.md
+**/docs/**
