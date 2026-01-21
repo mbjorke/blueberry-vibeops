@@ -43,4 +43,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CodeQL static analysis
 - No secrets committed to repository
 
-[1.0.0]: https://github.com/yourusername/vibeops-template/releases/tag/v1.0.0
+[1.0.0]: https://github.com/mbjorke/vibeops-template/releases/tag/v1.0.0

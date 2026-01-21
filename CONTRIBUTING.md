@@ -24,7 +24,7 @@ We welcome suggestions for new features or improvements:
 
 1. **Fork the repository**
    ```bash
-   git clone https://github.com/yourusername/vibeops-template.git
+   git clone https://github.com/mbjorke/vibeops-template.git
    cd vibeops-template
    ```
 
@@ -83,7 +83,7 @@ We welcome suggestions for new features or improvements:
 
 ```bash
 # Clone your fork
-git clone https://github.com/yourusername/vibeops-template.git
+git clone https://github.com/mbjorke/vibeops-template.git
 cd vibeops-template
 
 # Install dependencies

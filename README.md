@@ -274,7 +274,7 @@ MIT License - använd fritt för både personliga och kommersiella projekt.
 - 📚 [Supabase Docs](https://supabase.com/docs)
 - 📚 [Vite Docs](https://vitejs.dev)
 - 📚 [React Docs](https://react.dev)
-- 🐛 [Report Issues](https://github.com/yourusername/vibeops-template/issues)
+- 🐛 [Report Issues](https://github.com/mbjorke/vibeops-template/issues)
 
 ## 🙏 Credits
 
@@ -284,4 +284,4 @@ Byggd för vibe-kodare som vill fokusera på att bygga, inte sätta upp infrastr
 
 **Made with ❤️ for the AI coding community**
 
-[⭐ Star this repo](https://github.com/yourusername/vibeops-template) if you find it useful!
+[⭐ Star this repo](https://github.com/mbjorke/vibeops-template) if you find it useful!

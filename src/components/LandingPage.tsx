@@ -33,7 +33,7 @@ export const LandingPage = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <a
-                href="https://github.com/yourusername/vibeops-template"
+                href="https://github.com/mbjorke/vibeops-template"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
@@ -41,7 +41,7 @@ export const LandingPage = () => {
                 Use This Template
               </a>
               <a
-                href="https://github.com/yourusername/vibeops-template"
+                href="https://github.com/mbjorke/vibeops-template"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-4 bg-gray-800 border border-gray-700 rounded-lg font-semibold text-lg hover:bg-gray-700 transition-all"
@@ -251,7 +251,7 @@ export const LandingPage = () => {
                   <h3 className="text-xl font-semibold mb-2">Fork Repository</h3>
                   <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                     <code className="text-sm text-green-400">
-                      https://github.com/yourusername/vibeops-template
+                      https://github.com/mbjorke/vibeops-template
                     </code>
                   </div>
                   <p className="text-gray-400 text-sm mt-2">
@@ -387,7 +387,7 @@ export const LandingPage = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://github.com/yourusername/vibeops-template"
+                href="https://github.com/mbjorke/vibeops-template"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
@@ -395,7 +395,7 @@ export const LandingPage = () => {
                 Get Started Now →
               </a>
               <a
-                href="https://github.com/yourusername/vibeops-template/blob/main/README.md"
+                href="https://github.com/mbjorke/vibeops-template/blob/main/README.md"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-4 bg-transparent border-2 border-gray-600 rounded-lg font-semibold text-lg hover:border-gray-500 transition-all"
@@ -422,22 +422,22 @@ export const LandingPage = () => {
                 <h4 className="font-semibold mb-4">Resources</h4>
                 <ul className="space-y-2 text-sm text-gray-400">
                   <li>
-                    <a href="https://github.com/yourusername/vibeops-template" className="hover:text-blue-400">
+                    <a href="https://github.com/mbjorke/vibeops-template" className="hover:text-blue-400">
                       GitHub
                     </a>
                   </li>
                   <li>
-                    <a href="https://github.com/yourusername/vibeops-template/blob/main/README.md" className="hover:text-blue-400">
+                    <a href="https://github.com/mbjorke/vibeops-template/blob/main/README.md" className="hover:text-blue-400">
                       Documentation
                     </a>
                   </li>
                   <li>
-                    <a href="https://github.com/yourusername/vibeops-template/blob/main/CONTRIBUTING.md" className="hover:text-blue-400">
+                    <a href="https://github.com/mbjorke/vibeops-template/blob/main/CONTRIBUTING.md" className="hover:text-blue-400">
                       Contributing
                     </a>
                   </li>
                   <li>
-                    <a href="https://github.com/yourusername/vibeops-template/blob/main/CHANGELOG.md" className="hover:text-blue-400">
+                    <a href="https://github.com/mbjorke/vibeops-template/blob/main/CHANGELOG.md" className="hover:text-blue-400">
                       Changelog
                     </a>
                   </li>
@@ -447,17 +447,17 @@ export const LandingPage = () => {
                 <h4 className="font-semibold mb-4">Community</h4>
                 <ul className="space-y-2 text-sm text-gray-400">
                   <li>
-                    <a href="https://github.com/yourusername/vibeops-template/issues" className="hover:text-blue-400">
+                    <a href="https://github.com/mbjorke/vibeops-template/issues" className="hover:text-blue-400">
                       Issues
                     </a>
                   </li>
                   <li>
-                    <a href="https://github.com/yourusername/vibeops-template/discussions" className="hover:text-blue-400">
+                    <a href="https://github.com/mbjorke/vibeops-template/discussions" className="hover:text-blue-400">
                       Discussions
                     </a>
                   </li>
                   <li>
-                    <a href="https://github.com/yourusername/vibeops-template/blob/main/SECURITY.md" className="hover:text-blue-400">
+                    <a href="https://github.com/mbjorke/vibeops-template/blob/main/SECURITY.md" className="hover:text-blue-400">
                       Security
                     </a>
                   </li>
