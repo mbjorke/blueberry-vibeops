@@ -1,71 +1,52 @@
-# VibeOps 🚀
+# Blueberry Fintech 🫐💰
 
-**Managed DevSecOps Template for AI-coded Apps**
+**Personal Finance Management App with VibeOps DevSecOps**
 
-A production-ready GitHub template that gives you a complete DevSecOps setup in 5 minutes. Perfect for applications built with Lovable, Cursor, and other AI coding tools.
+A modern fintech application built with React, TypeScript, and Supabase, enhanced with VibeOps managed DevSecOps infrastructure for secure, multi-environment deployment.
 
 ## ✨ Features
 
+### Application Features
+- 📊 **Financial Dashboard**: Real-time account overview and transaction tracking
+- 💳 **Multiple Accounts**: Support for checking, savings, and credit cards
+- 📈 **Spending Insights**: Visual analytics and budget tracking
+- 🔔 **Smart Alerts**: Notifications for important financial events
+- 🎨 **Modern UI**: Beautiful component library built with Radix UI
+- 🌙 **Dark Mode**: Full dark mode support with theme toggle
+
+### DevSecOps Features (VibeOps)
 - 🔐 **Security First**: CodeQL, Dependabot, and secrets scanning built-in
 - 🎨 **3 Environments**: DEV, BETA, and PROD with visual badges
-- ⚡ **Quick Setup**: Fork, configure, and you're ready in 5 minutes
-- 🤖 **AI-Friendly**: Optimized for Lovable, Cursor, and similar tools
-- 🔄 **CI/CD**: Automatic scanning and deploy via GitHub Actions
+- 🔄 **CI/CD**: Automatic scanning and deployment via GitHub Actions
 - 📦 **Supabase-Ready**: Pre-configured with RLS policies
-- 🎯 **Production-Ready Landing Page**: Modern, responsive landing page included
+- 🛡️ **Compliance**: OWASP, GDPR, and SOC2 documentation
 
-## 🎨 Landing Page
+## 🎯 Environment Badges
 
-The template includes a fully functional landing page with:
+The app shows a color-coded badge indicating which environment you're running:
 
-- **Hero section** with gradient and call-to-action
-- **Feature showcase** with 6 key features
-- **Environment badges showcase** (DEV/BETA/PROD)
-- **Quick Start guide** with step-by-step instructions
-- **Tech stack display** with icons
-- **Footer** with documentation links
+| Environment | Color | Usage |
+|-------------|-------|-------|
+| **DEV** | 🔵 Blue | Development and rapid iteration |
+| **BETA** | 🟠 Orange | Testing with real data |
+| **PROD** | 🔴 Red | Live production |
+| **LOCAL** | ⚫ Gray | Local development without Supabase |
 
-Landing page is built with Tailwind CSS and is fully responsive. Easily customize by editing `src/components/LandingPage.tsx`.
+## 🚀 Quick Start
 
-### Customize Landing Page
+### 1. Install dependencies
 
-```typescript
-// src/components/LandingPage.tsx
-
-// Change GitHub URL:
-href="https://github.com/YOURUSERNAME/YOURREPO"
-
-// Customize colors in Tailwind:
-className="bg-gradient-to-r from-blue-500 to-purple-600"
-
-// Add/remove features:
-// Edit features array in Features Section
+```bash
+npm install
 ```
 
-## 🚀 Quick Start (5 minutes)
-
-### 1. Fork this repository
-
-Click "Use this template" at the top of the page or fork the repo directly.
-
-### 2. Create Supabase projects
-
-Create three separate Supabase projects for your environments:
-
-- `your-app-dev` (DEV)
-- `your-app-beta` (BETA)
-- `your-app-prod` (PROD)
-
-Go to [Supabase Dashboard](https://app.supabase.com) → New Project
-
-### 3. Configure environment variables
+### 2. Configure environment
 
 ```bash
 # Copy the example file
 cp .env.example .env.local
 
-# Edit .env.local and add your Supabase credentials
-# Get these from Supabase Dashboard → Settings → API
+# Edit .env.local with your Supabase credentials
 ```
 
 **.env.local example:**
@@ -75,44 +56,19 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 VITE_APP_ENV=DEV
 ```
 
-### 4. Install and run
+### 3. Run the development server
 
 ```bash
-npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) - you should see a blue "DEV" badge in the bottom right corner! 🎉
-
-### 5. Push to GitHub
-
-```bash
-git add .
-git commit -m "Initial setup"
-git push
-```
-
-GitHub Actions will automatically run security scans on every push!
-
-## 🎨 Environments
-
-The project supports three environments, visible via color-coded badges:
-
-| Environment | Color | Usage |
-|-------------|-------|-------|
-| **DEV** | 🔵 Blue | Development and Lovable iteration |
-| **BETA** | 🟠 Orange | Testing with data |
-| **PROD** | 🔴 Red | Live production |
-
-The environment is automatically determined from:
-1. `VITE_APP_ENV` environment variable
-2. Supabase URL (e.g., `-dev`, `-beta`, `-prod` in URL)
+Open [http://localhost:8080](http://localhost:8080) - you should see the app with an environment badge in the bottom-right corner! 🎉
 
 ## 🔐 Security & Compliance
 
 ### Automatic Security Checks
 
-Every push and pull request runs:
+Every push runs:
 
 - ✅ **ESLint** - Code quality and best practices
 - ✅ **CodeQL** - SAST (Static Application Security Testing)
@@ -120,20 +76,14 @@ Every push and pull request runs:
 - ✅ **Gitleaks** - Secrets detection
 - ✅ **Dependabot** - Automatic dependency updates
 
+View security status: https://github.com/mbjorke/blueberry-vibeops/security
+
 ### Supabase RLS
 
-The project includes example migrations with Row Level Security (RLS) policies:
+Database migrations include Row Level Security (RLS) policies:
 
-```sql
--- See supabase/migrations/00001_initial_schema.sql
-CREATE POLICY "Users can only view their own data"
-  ON public.profiles FOR SELECT
-  USING (auth.uid() = id);
-```
-
-Run migrations:
 ```bash
-# Install Supabase CLI if you don't have it
+# Install Supabase CLI
 npm install -g supabase
 
 # Link your project
@@ -143,64 +93,57 @@ supabase link --project-ref your-project-ref
 supabase db push
 ```
 
-## 📋 GitHub Actions Workflows
-
-### CI & Security Scan (`.github/workflows/ci-scan.yml`)
-
-Runs on: `push`, `pull_request`
-
-- Lint & build
-- CodeQL analysis
-- Dependency scanning
-- Secrets scanning
-
-### Deploy Preview (`.github/workflows/deploy.yml`)
-
-Runs on: `pull_request`
-
-- Builds the app
-- Deploys to Vercel (requires configuration)
-- Comments on PR with preview URL
-
-### Configure Vercel Deployment (Optional)
-
-1. Create a project on [Vercel](https://vercel.com)
-2. Add GitHub Secrets:
-   - `VERCEL_TOKEN`
-   - `VERCEL_ORG_ID`
-   - `VERCEL_PROJECT_ID`
+See [SECURITY.md](./SECURITY.md) for complete security documentation.
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React 19 + TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **Backend**: Supabase (PostgreSQL + Auth + Storage)
-- **CI/CD**: GitHub Actions
-- **Deployment**: Vercel (or any platform)
+### Frontend
+- **React 18** - UI library
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **Tailwind CSS v4** - Styling with @tailwindcss/vite
+- **Radix UI** - Accessible component primitives
+- **React Router** - Navigation
+- **TanStack Query** - Data fetching and caching
+
+### Backend
+- **Supabase** - PostgreSQL database, authentication, and storage
+- **Row Level Security** - Database-level access control
+
+### DevOps
+- **GitHub Actions** - CI/CD and security scanning
+- **Vitest** - Unit and component testing
+- **Playwright** - Visual regression testing
+- **Storybook** - Component documentation
 
 ## 📁 Project Structure
 
 ```
-vibeops-template/
+blueberry-vibeops/
 ├── src/
-│   ├── lib/
-│   │   └── supabase.ts          # Supabase client with env config
 │   ├── components/
-│   │   ├── EnvironmentBadge.tsx # Visual environment indicator
-│   │   └── LandingPage.tsx      # Production-ready landing page
-│   ├── utils/
-│   │   └── security.ts          # Security utilities
-│   └── App.tsx                  # Main app component
+│   │   ├── fintech/           # Fintech-specific components
+│   │   ├── ui/                # Reusable UI components
+│   │   ├── theme/             # Theme provider & toggle
+│   │   └── EnvironmentBadge.tsx # Environment indicator
+│   ├── pages/
+│   │   ├── Dashboard.tsx      # Main financial dashboard
+│   │   └── Index.tsx          # Landing page
+│   ├── lib/
+│   │   ├── supabase.ts        # Supabase client with env detection
+│   │   ├── utils.ts           # Utility functions
+│   │   └── format-currency.ts # Currency formatting
+│   ├── hooks/                 # Custom React hooks
+│   ├── stories/               # Storybook stories
+│   └── test/                  # Test utilities
 ├── supabase/
-│   ├── migrations/              # Database migrations with RLS
-│   └── seed.sql                 # Test data for DEV/BETA
+│   ├── migrations/            # Database schema with RLS
+│   └── seed.sql               # Test data
 ├── .github/
 │   └── workflows/
-│       ├── ci-scan.yml          # CI & security scans
-│       └── deploy.yml           # Deploy previews
-├── .env.example                 # Environment variables template
-└── README.md                    # This file
+│       ├── ci-scan.yml        # Security scanning
+│       └── deploy.yml         # Deployment previews
+└── README.md                  # This file
 ```
 
 ## 🔧 Development
@@ -208,49 +151,63 @@ vibeops-template/
 ### Available Commands
 
 ```bash
-npm run dev          # Start dev server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run lint         # Run ESLint
+npm run dev              # Start dev server (port 8080)
+npm run build            # Build for production
+npm run preview          # Preview production build
+npm run lint             # Run ESLint
+npm run type-check       # TypeScript type checking
+npm run test             # Run unit tests
+npm run test:visual      # Run Playwright tests
+npm run storybook        # Start Storybook
 ```
 
-### Add New Features
+### Component Development
 
-1. Develop in DEV environment (blue badge)
-2. Test in BETA environment (orange badge)
-3. Deploy to PROD when everything works (red badge)
+This project uses Storybook for component development:
+
+```bash
+npm run storybook
+```
+
+Visit http://localhost:6006 to browse and develop components in isolation.
 
 ## 🚢 Deployment
 
-### Vercel (Recommended)
+### Multi-Environment Setup
+
+1. **Create Supabase projects** for each environment:
+   - `blueberry-dev` (DEV)
+   - `blueberry-beta` (BETA)
+   - `blueberry-prod` (PROD)
+
+2. **Configure GitHub Secrets** for each environment:
+   ```
+   SUPABASE_URL_DEV
+   SUPABASE_ANON_KEY_DEV
+   SUPABASE_URL_BETA
+   SUPABASE_ANON_KEY_BETA
+   SUPABASE_URL_PROD
+   SUPABASE_ANON_KEY_PROD
+   ```
+
+3. **Push to GitHub** - Actions will automatically run security scans
+
+### Vercel Deployment (Recommended)
 
 ```bash
 npm install -g vercel
 vercel
 ```
 
-### Other Platforms
-
-The project works with all Vite-compatible hosting services:
-- Netlify
-- Cloudflare Pages
-- AWS Amplify
-- GitHub Pages
+Set environment variables in Vercel dashboard for each environment.
 
 ## 📝 Best Practices
 
 ### Environment Variables
 
-- ✅ Always use `.env.local` for local secrets
-- ✅ Keep `.env.example` updated without real values
+- ✅ Use `.env.local` for local development
+- ✅ Keep `.env.example` updated (without real values)
 - ❌ Never commit `.env` or `.env.local` to git
-
-### Security
-
-- ✅ Enable RLS on all Supabase tables
-- ✅ Run `npm audit` regularly
-- ✅ Keep dependencies updated
-- ❌ Never expose service_role keys in frontend
 
 ### Git Workflow
 
@@ -262,17 +219,22 @@ develop   # Staging (BETA)
 feature/* # Development (DEV)
 ```
 
-## 🎨 Lovable Integration
+### Security
 
-Perfect for Lovable users who want environment separation and automatic security scanning without DevOps configuration.
+- ✅ Enable RLS on all Supabase tables
+- ✅ Review security scan results on every push
+- ✅ Keep dependencies updated via Dependabot
+- ❌ Never expose service_role keys in frontend code
 
-See [LOVABLE-WORKFLOW.md](./LOVABLE-WORKFLOW.md) for complete integration guide.
+## 📚 Documentation
+
+- [SECURITY.md](./SECURITY.md) - Security policies and compliance
+- [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution guidelines
+- [LOVABLE-WORKFLOW.md](./LOVABLE-WORKFLOW.md) - Lovable integration guide
 
 ## 🤝 Contributing
 
-Contributions are welcome! Open an issue or submit a PR.
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
@@ -283,14 +245,16 @@ MIT License - use freely for both personal and commercial projects.
 - 📚 [Supabase Docs](https://supabase.com/docs)
 - 📚 [Vite Docs](https://vitejs.dev)
 - 📚 [React Docs](https://react.dev)
-- 🐛 [Report Issues](https://github.com/mbjorke/vibeops-template/issues)
+- 📚 [Tailwind CSS Docs](https://tailwindcss.com)
+- 🐛 [Report Issues](https://github.com/mbjorke/blueberry-vibeops/issues)
 
 ## 🙏 Credits
 
-Built for vibe coders who want to focus on building, not setting up infrastructure.
+- **Blueberry Fintech** - Original application
+- **VibeOps** - DevSecOps infrastructure ([vibeops-template](https://github.com/mbjorke/vibeops-template))
 
 ---
 
-**Made with ❤️ for the AI coding community**
+**Made with ❤️ for secure fintech development**
 
-[⭐ Star this repo](https://github.com/mbjorke/vibeops-template) if you find it useful!
+[⭐ Star this repo](https://github.com/mbjorke/blueberry-vibeops) if you find it useful!
