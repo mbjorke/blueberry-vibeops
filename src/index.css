@@ -1,1 +1,66 @@
 @import "tailwindcss";
+@config "../tailwind.config.ts";
+
+:root {
+  --font-sans: 'Montserrat Variable', 'Montserrat', system-ui, -apple-system, sans-serif;
+
+  /* Light theme */
+  --background: 0 0% 100%;
+  --foreground: 240 6% 15%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 6% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 6% 15%;
+  --primary: 240 6% 15%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 6% 10%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
+  --accent: 260 85% 68%;
+  --accent-foreground: 0 0% 98%;
+  --success: 150 80% 45%;
+  --success-foreground: 0 0% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --ring: 260 85% 68%;
+  --radius: 0.75rem;
+  --gradient-primary: linear-gradient(135deg, hsl(260 85% 68%), hsl(280 90% 72%));
+  --gradient-bg: linear-gradient(135deg, hsl(240 15% 8%), hsl(240 12% 11%));
+  --gradient-berry: linear-gradient(135deg, hsl(260 85% 68%), hsl(230 80% 65%));
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark {
+  --background: 240 15% 8%;
+  --foreground: 240 5% 98%;
+  --card: 240 12% 11%;
+  --card-foreground: 240 5% 98%;
+  --popover: 240 15% 8%;
+  --popover-foreground: 240 5% 98%;
+  --primary: 240 5% 98%;
+  --primary-foreground: 240 15% 8%;
+  --secondary: 240 8% 15%;
+  --secondary-foreground: 240 5% 98%;
+  --muted: 240 6% 18%;
+  --muted-foreground: 240 5% 65%;
+  --accent: 260 85% 68%;
+  --accent-foreground: 240 5% 98%;
+  --success: 150 80% 55%;
+  --success-foreground: 240 15% 8%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 240 5% 98%;
+  --border: 240 8% 20%;
+  --input: 240 8% 15%;
+}

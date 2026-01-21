@@ -1,7 +1,33 @@
-import { LandingPage } from './components/LandingPage'
+import { Toaster } from "@/components/ui/toaster";
+import { SonnerToaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { EnvironmentBadge } from "@/components/EnvironmentBadge";
+import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
 
-function App() {
-  return <LandingPage />
-}
+const queryClient = new QueryClient();
 
-export default App
+const App = () => (
+  <div className="min-h-screen bg-background text-foreground">
+    <EnvironmentBadge />
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </div>
+);
+
+export default App;
