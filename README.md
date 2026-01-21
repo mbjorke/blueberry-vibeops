@@ -1,90 +1,90 @@
 # VibeOps 🚀
 
-**Managed DevSecOps Template för AI-kodade appar**
+**Managed DevSecOps Template for AI-coded Apps**
 
-En produktionsredo GitHub-template som ger dig en komplett DevSecOps-uppsättning på 5 minuter. Perfekt för applikationer byggda med Lovable, Cursor och andra AI-kodningsverktyg.
+A production-ready GitHub template that gives you a complete DevSecOps setup in 5 minutes. Perfect for applications built with Lovable, Cursor, and other AI coding tools.
 
 ## ✨ Features
 
-- 🔐 **Säkerhet först**: CodeQL, Dependabot, och secrets scanning inbyggt
-- 🎨 **3 miljöer**: DEV, BETA, och PROD med visuella badges
-- ⚡ **Snabb setup**: Fork, konfigurera, och du är igång på 5 minuter
-- 🤖 **AI-vänlig**: Optimerad för Lovable, Cursor och liknande verktyg
-- 🔄 **CI/CD**: Automatisk scanning och deploy via GitHub Actions
-- 📦 **Supabase-ready**: Pre-konfigurerad med RLS policies
-- 🎯 **Production-ready landing page**: Modern, responsiv landing page inbyggd
+- 🔐 **Security First**: CodeQL, Dependabot, and secrets scanning built-in
+- 🎨 **3 Environments**: DEV, BETA, and PROD with visual badges
+- ⚡ **Quick Setup**: Fork, configure, and you're ready in 5 minutes
+- 🤖 **AI-Friendly**: Optimized for Lovable, Cursor, and similar tools
+- 🔄 **CI/CD**: Automatic scanning and deploy via GitHub Actions
+- 📦 **Supabase-Ready**: Pre-configured with RLS policies
+- 🎯 **Production-Ready Landing Page**: Modern, responsive landing page included
 
 ## 🎨 Landing Page
 
-Templatet inkluderar en fullt fungerande landing page med:
+The template includes a fully functional landing page with:
 
-- **Hero section** med gradient och call-to-action
-- **Feature showcase** med 6 key features
+- **Hero section** with gradient and call-to-action
+- **Feature showcase** with 6 key features
 - **Environment badges showcase** (DEV/BETA/PROD)
-- **Quick Start guide** med steg-för-steg instruktioner
-- **Tech stack display** med ikoner
-- **Footer** med länkar till dokumentation
+- **Quick Start guide** with step-by-step instructions
+- **Tech stack display** with icons
+- **Footer** with documentation links
 
-Landing page är byggd med Tailwind CSS och är helt responsiv. Anpassa den enkelt genom att redigera `src/components/LandingPage.tsx`.
+Landing page is built with Tailwind CSS and is fully responsive. Easily customize by editing `src/components/LandingPage.tsx`.
 
-### Anpassa Landing Page
+### Customize Landing Page
 
 ```typescript
 // src/components/LandingPage.tsx
 
-// Ändra GitHub URL:
+// Change GitHub URL:
 href="https://github.com/YOURUSERNAME/YOURREPO"
 
-// Anpassa färger i Tailwind:
+// Customize colors in Tailwind:
 className="bg-gradient-to-r from-blue-500 to-purple-600"
 
-// Lägg till/ta bort features:
-// Redigera features array i Features Section
+// Add/remove features:
+// Edit features array in Features Section
 ```
 
-## 🚀 Quick Start (5 minuter)
+## 🚀 Quick Start (5 minutes)
 
-### 1. Fork detta repository
+### 1. Fork this repository
 
-Klicka på "Use this template" längst upp på sidan eller fork:a repot direkt.
+Click "Use this template" at the top of the page or fork the repo directly.
 
-### 2. Skapa Supabase-projekt
+### 2. Create Supabase projects
 
-Skapa tre separata Supabase-projekt för dina miljöer:
+Create three separate Supabase projects for your environments:
 
 - `your-app-dev` (DEV)
 - `your-app-beta` (BETA)
 - `your-app-prod` (PROD)
 
-Gå till [Supabase Dashboard](https://app.supabase.com) → New Project
+Go to [Supabase Dashboard](https://app.supabase.com) → New Project
 
-### 3. Konfigurera environment variables
+### 3. Configure environment variables
 
 ```bash
-# Kopiera exempel-filen
+# Copy the example file
 cp .env.example .env.local
 
-# Redigera .env.local och lägg till dina Supabase-credentials
-# Hämta dessa från Supabase Dashboard → Settings → API
+# Edit .env.local and add your Supabase credentials
+# Get these from Supabase Dashboard → Settings → API
 ```
 
-**.env.local exempel:**
+**.env.local example:**
 ```env
 VITE_SUPABASE_URL=https://your-project-dev.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 VITE_APP_ENV=DEV
 ```
 
-### 4. Installera och kör
+### 4. Install and run
 
 ```bash
 npm install
 npm run dev
 ```
 
-Öppna [http://localhost:5173](http://localhost:5173) - du bör se en blå "DEV" badge längst ner till höger! 🎉
+Open [http://localhost:5173](http://localhost:5173) - you should see a blue "DEV" badge in the bottom right corner! 🎉
 
-### 5. Push till GitHub
+### 5. Push to GitHub
 
 ```bash
 git add .
@@ -92,54 +92,54 @@ git commit -m "Initial setup"
 git push
 ```
 
-GitHub Actions kommer automatiskt att köra säkerhetsscanningar på varje push!
+GitHub Actions will automatically run security scans on every push!
 
-## 🎨 Miljöer
+## 🎨 Environments
 
-Projektet har stöd för tre miljöer, synliga via färgkodade badges:
+The project supports three environments, visible via color-coded badges:
 
-| Miljö | Färg | Användning |
-|-------|------|------------|
-| **DEV** | 🔵 Blå | Utveckling och Lovable iteration |
-| **BETA** | 🟠 Orange | Testning med data |
-| **PROD** | 🔴 Röd | Live-produktion |
+| Environment | Color | Usage |
+|-------------|-------|-------|
+| **DEV** | 🔵 Blue | Development and Lovable iteration |
+| **BETA** | 🟠 Orange | Testing with data |
+| **PROD** | 🔴 Red | Live production |
 
-Miljön bestäms automatiskt från:
+The environment is automatically determined from:
 1. `VITE_APP_ENV` environment variable
-2. Supabase URL (t.ex. `-dev`, `-beta`, `-prod` i URL:en)
+2. Supabase URL (e.g., `-dev`, `-beta`, `-prod` in URL)
 
-## 🔐 Säkerhet & Compliance
+## 🔐 Security & Compliance
 
-### Automatiska säkerhetskontroller
+### Automatic Security Checks
 
-Varje push och pull request kör:
+Every push and pull request runs:
 
-- ✅ **ESLint** - Kod-kvalitet och best practices
+- ✅ **ESLint** - Code quality and best practices
 - ✅ **CodeQL** - SAST (Static Application Security Testing)
 - ✅ **npm audit** - Dependency vulnerability scanning
 - ✅ **Gitleaks** - Secrets detection
-- ✅ **Dependabot** - Automatiska dependency updates
+- ✅ **Dependabot** - Automatic dependency updates
 
 ### Supabase RLS
 
-Projektet inkluderar exempel-migrations med Row Level Security (RLS) policies:
+The project includes example migrations with Row Level Security (RLS) policies:
 
 ```sql
--- Se supabase/migrations/00001_initial_schema.sql
+-- See supabase/migrations/00001_initial_schema.sql
 CREATE POLICY "Users can only view their own data"
   ON public.profiles FOR SELECT
   USING (auth.uid() = id);
 ```
 
-Kör migrations:
+Run migrations:
 ```bash
-# Installera Supabase CLI om du inte har det
+# Install Supabase CLI if you don't have it
 npm install -g supabase
 
-# Länka ditt projekt
+# Link your project
 supabase link --project-ref your-project-ref
 
-# Kör migrations
+# Run migrations
 supabase db push
 ```
 
@@ -147,7 +147,7 @@ supabase db push
 
 ### CI & Security Scan (`.github/workflows/ci-scan.yml`)
 
-Körs på: `push`, `pull_request`
+Runs on: `push`, `pull_request`
 
 - Lint & build
 - CodeQL analysis
@@ -156,81 +156,82 @@ Körs på: `push`, `pull_request`
 
 ### Deploy Preview (`.github/workflows/deploy.yml`)
 
-Körs på: `pull_request`
+Runs on: `pull_request`
 
-- Bygger appen
-- Deployer till Vercel (kräver konfiguration)
-- Kommenterar PR med preview URL
+- Builds the app
+- Deploys to Vercel (requires configuration)
+- Comments on PR with preview URL
 
-### Konfigurera Vercel Deployment (Valfritt)
+### Configure Vercel Deployment (Optional)
 
-1. Skapa ett projekt på [Vercel](https://vercel.com)
-2. Lägg till GitHub Secrets:
+1. Create a project on [Vercel](https://vercel.com)
+2. Add GitHub Secrets:
    - `VERCEL_TOKEN`
    - `VERCEL_ORG_ID`
    - `VERCEL_PROJECT_ID`
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React 18 + TypeScript
+- **Frontend**: React 19 + TypeScript
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS
 - **Backend**: Supabase (PostgreSQL + Auth + Storage)
 - **CI/CD**: GitHub Actions
-- **Deployment**: Vercel (eller valfri platform)
+- **Deployment**: Vercel (or any platform)
 
-## 📁 Projektstruktur
+## 📁 Project Structure
 
 ```
 vibeops-template/
 ├── src/
 │   ├── lib/
-│   │   └── supabase.ts          # Supabase client med env-config
+│   │   └── supabase.ts          # Supabase client with env config
 │   ├── components/
-│   │   └── EnvironmentBadge.tsx # Visuell miljö-indikator
+│   │   ├── EnvironmentBadge.tsx # Visual environment indicator
+│   │   └── LandingPage.tsx      # Production-ready landing page
 │   ├── utils/
-│   │   └── security.ts          # Säkerhetsverktyg
+│   │   └── security.ts          # Security utilities
 │   └── App.tsx                  # Main app component
 ├── supabase/
-│   ├── migrations/              # Database migrations med RLS
-│   └── seed.sql                 # Test-data för DEV/BETA
+│   ├── migrations/              # Database migrations with RLS
+│   └── seed.sql                 # Test data for DEV/BETA
 ├── .github/
 │   └── workflows/
-│       ├── ci-scan.yml          # CI & säkerhetsscanningar
+│       ├── ci-scan.yml          # CI & security scans
 │       └── deploy.yml           # Deploy previews
 ├── .env.example                 # Environment variables template
-└── README.md                    # Denna fil
+└── README.md                    # This file
 ```
 
 ## 🔧 Development
 
-### Tillgängliga kommandon
+### Available Commands
 
 ```bash
-npm run dev          # Starta dev server
-npm run build        # Bygg för produktion
+npm run dev          # Start dev server
+npm run build        # Build for production
 npm run preview      # Preview production build
-npm run lint         # Kör ESLint
+npm run lint         # Run ESLint
 ```
 
-### Lägg till nya features
+### Add New Features
 
-1. Utveckla i DEV-miljön (blå badge)
-2. Testa i BETA-miljön (orange badge)
-3. Deploy till PROD när allt fungerar (röd badge)
+1. Develop in DEV environment (blue badge)
+2. Test in BETA environment (orange badge)
+3. Deploy to PROD when everything works (red badge)
 
 ## 🚢 Deployment
 
-### Vercel (Rekommenderat)
+### Vercel (Recommended)
 
 ```bash
 npm install -g vercel
 vercel
 ```
 
-### Andra platformar
+### Other Platforms
 
-Projektet fungerar med alla Vite-kompatibla hosting-tjänster:
+The project works with all Vite-compatible hosting services:
 - Netlify
 - Cloudflare Pages
 - AWS Amplify
@@ -240,34 +241,42 @@ Projektet fungerar med alla Vite-kompatibla hosting-tjänster:
 
 ### Environment Variables
 
-- ✅ Använd alltid `.env.local` för lokala secrets
-- ✅ Håll `.env.example` uppdaterad utan riktiga värden
-- ❌ Commit aldrig `.env` eller `.env.local` till git
+- ✅ Always use `.env.local` for local secrets
+- ✅ Keep `.env.example` updated without real values
+- ❌ Never commit `.env` or `.env.local` to git
 
-### Säkerhet
+### Security
 
-- ✅ Aktivera RLS på alla Supabase-tabeller
-- ✅ Kör `npm audit` regelbundet
-- ✅ Håll dependencies uppdaterade
-- ❌ Exponera aldrig service_role keys i frontend
+- ✅ Enable RLS on all Supabase tables
+- ✅ Run `npm audit` regularly
+- ✅ Keep dependencies updated
+- ❌ Never expose service_role keys in frontend
 
 ### Git Workflow
 
 ```bash
-main      # Produktion (PROD)
+main      # Production (PROD)
   ↑
 develop   # Staging (BETA)
   ↑
 feature/* # Development (DEV)
 ```
 
+## 🎨 Lovable Integration
+
+Perfect for Lovable users who want environment separation and automatic security scanning without DevOps configuration.
+
+See [LOVABLE-WORKFLOW.md](./LOVABLE-WORKFLOW.md) for complete integration guide.
+
 ## 🤝 Contributing
 
-Bidrag är välkomna! Öppna en issue eller skicka en PR.
+Contributions are welcome! Open an issue or submit a PR.
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
-MIT License - använd fritt för både personliga och kommersiella projekt.
+MIT License - use freely for both personal and commercial projects.
 
 ## 🆘 Support
 
@@ -278,7 +287,7 @@ MIT License - använd fritt för både personliga och kommersiella projekt.
 
 ## 🙏 Credits
 
-Byggd för vibe-kodare som vill fokusera på att bygga, inte sätta upp infrastruktur.
+Built for vibe coders who want to focus on building, not setting up infrastructure.
 
 ---
 

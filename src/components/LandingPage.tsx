@@ -20,14 +20,14 @@ export const LandingPage = () => {
               </h1>
               <div className="flex items-center justify-center gap-2 text-gray-400">
                 <span className="text-2xl">🚀</span>
-                <p className="text-2xl font-light">Managed DevSecOps för AI-kodade appar</p>
+                <p className="text-2xl font-light">Managed DevSecOps for AI-coded Apps</p>
               </div>
             </div>
 
             {/* Subtitle */}
             <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Fork, konfigurera, och var produktionsredo på 5 minuter. Komplett med säkerhet,
-              CI/CD, och 3 miljöer. Perfekt för Lovable, Cursor och andra AI-verktyg.
+              Fork, configure, and be production-ready in 5 minutes. Komplett med säkerhet,
+              CI/CD, och 3 miljöer. Perfect for Lovable, Cursor and other AI tools.
             </p>
 
             {/* CTA Buttons */}
@@ -157,9 +157,9 @@ export const LandingPage = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Säkerhet Först</h3>
+                <h3 className="text-xl font-semibold mb-2">Security First</h3>
                 <p className="text-gray-400 text-sm">
-                  CodeQL, Dependabot, Gitleaks, och RLS policies inbyggt. OWASP best practices från start.
+                  CodeQL, Dependabot, Gitleaks, and RLS policies built-in. OWASP best practices from the start.
                 </p>
               </div>
 
@@ -172,7 +172,7 @@ export const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">GitHub Actions</h3>
                 <p className="text-gray-400 text-sm">
-                  Automatisk CI/CD med scanning, testing, och deploy previews på varje PR.
+                  Automatic CI/CD with scanning, testing, and deploy previews on every PR.
                 </p>
               </div>
 
@@ -185,7 +185,7 @@ export const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Supabase Ready</h3>
                 <p className="text-gray-400 text-sm">
-                  Pre-konfigurerad med RLS, migrations, och environment isolation för DEV/BETA/PROD.
+                  Pre-configured with RLS, migrations, and environment isolation for DEV/BETA/PROD.
                 </p>
               </div>
 
@@ -198,7 +198,7 @@ export const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Modern Stack</h3>
                 <p className="text-gray-400 text-sm">
-                  React 19, TypeScript, Vite, Tailwind CSS v4. Allt optimerat för hastighet och DX.
+                  React 19, TypeScript, Vite, Tailwind CSS v4. All optimized for speed and DX.
                 </p>
               </div>
 
@@ -211,7 +211,7 @@ export const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">AI-Optimerad</h3>
                 <p className="text-gray-400 text-sm">
-                  Perfekt för Lovable, Cursor, och andra AI-verktyg. Tydlig struktur och dokumentation.
+                  Perfect for Lovable, Cursor, and other AI tools. Clear structure and documentation.
                 </p>
               </div>
 
@@ -224,7 +224,7 @@ export const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">5-Min Setup</h3>
                 <p className="text-gray-400 text-sm">
-                  Fork, lägg till env vars, kör npm install. Färdig. Ingen komplex konfiguration.
+                  Fork, lägg till env vars, kör npm install. Done. No complex configuration.
                 </p>
               </div>
             </div>
@@ -238,7 +238,7 @@ export const LandingPage = () => {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-center mb-4">Get Started in 5 Minutes</h2>
             <p className="text-gray-400 text-center mb-12 text-lg">
-              Från fork till production på rekordtid
+              From fork to production in record time
             </p>
 
             <div className="space-y-6">
@@ -255,7 +255,7 @@ export const LandingPage = () => {
                     </code>
                   </div>
                   <p className="text-gray-400 text-sm mt-2">
-                    Klicka på "Use this template" eller fork:a repot direkt
+                    Click "Use this template" or fork the repo directly
                   </p>
                 </div>
               </div>
@@ -268,7 +268,7 @@ export const LandingPage = () => {
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold mb-2">Skapa Supabase Projekt</h3>
                   <p className="text-gray-400 text-sm mb-2">
-                    Skapa 3 projekt på <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">supabase.com</a>:
+                    Create 3 projects on <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">supabase.com</a>:
                     your-app-dev, your-app-beta, your-app-prod
                   </p>
                 </div>
@@ -282,9 +282,9 @@ export const LandingPage = () => {
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold mb-2">Konfigurera Environment</h3>
                   <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 font-mono text-sm">
-                    <div className="text-gray-500"># Kopiera exempel-filen</div>
+                    <div className="text-gray-500"># Copy the example file</div>
                     <div className="text-green-400">cp .env.example .env.local</div>
-                    <div className="mt-2 text-gray-500"># Lägg till dina Supabase credentials</div>
+                    <div className="mt-2 text-gray-500"># Add your Supabase credentials</div>
                   </div>
                 </div>
               </div>
@@ -301,7 +301,7 @@ export const LandingPage = () => {
                     <div className="text-green-400">npm run dev</div>
                   </div>
                   <p className="text-gray-400 text-sm mt-2">
-                    Öppna localhost:5173 och se din app med miljö-badge!
+                    Open localhost:5173 and see your app with environment badge!
                   </p>
                 </div>
               </div>
@@ -317,7 +317,7 @@ export const LandingPage = () => {
                     <div className="text-green-400">git push origin main</div>
                   </div>
                   <p className="text-gray-400 text-sm mt-2">
-                    GitHub Actions kör automatiskt! CodeQL, säkerhetsscanning, och mer.
+                    GitHub Actions run automatically! CodeQL, security scanning, and more.
                   </p>
                 </div>
               </div>
@@ -383,7 +383,7 @@ export const LandingPage = () => {
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-4">Ready to VibeOps?</h2>
             <p className="text-xl text-gray-300 mb-8">
-              Sluta konfigurera. Börja bygga. Fork templatet och var produktionsredo på 5 minuter.
+              Stop configuring. Start building. Fork the template and be production-ready in 5 minutes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -415,7 +415,7 @@ export const LandingPage = () => {
               <div>
                 <h3 className="font-bold text-lg mb-4">VibeOps</h3>
                 <p className="text-sm text-gray-400">
-                  Managed DevSecOps template för AI-kodade appar. Open source och gratis att använda.
+                  Managed DevSecOps template för AI-kodade appar. Open source and free to use.
                 </p>
               </div>
               <div>
