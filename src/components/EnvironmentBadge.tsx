@@ -1,6 +1,6 @@
-import { getEnvironment } from '../lib/supabase'
+import { getEnvironment } from '@/integrations/supabase/client';
 
-type Environment = 'DEV' | 'BETA' | 'PROD' | 'LOCAL'
+type Environment = 'DEV' | 'BETA' | 'PROD' | 'LOCAL';
 
 const environmentConfig: Record<
   Environment,
@@ -26,11 +26,11 @@ const environmentConfig: Record<
     text: 'text-white',
     label: 'LOCAL',
   },
-}
+};
 
 export const EnvironmentBadge = () => {
-  const environment = getEnvironment()
-  const config = environmentConfig[environment]
+  const environment = getEnvironment();
+  const config = environmentConfig[environment];
 
   return (
     <div
@@ -44,5 +44,5 @@ export const EnvironmentBadge = () => {
         {config.label}
       </div>
     </div>
-  )
-}
+  );
+};

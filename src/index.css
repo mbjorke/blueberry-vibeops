@@ -1,66 +1,216 @@
-@import "tailwindcss";
-@config "../tailwind.config.ts";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --font-sans: 'Montserrat Variable', 'Montserrat', system-ui, -apple-system, sans-serif;
+/* Blueberry VibeOps Design System */
 
-  /* Light theme */
-  --background: 0 0% 100%;
-  --foreground: 240 6% 15%;
-  --card: 0 0% 100%;
-  --card-foreground: 240 6% 15%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 6% 15%;
-  --primary: 240 6% 15%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 5% 96%;
-  --secondary-foreground: 240 6% 10%;
-  --muted: 240 5% 96%;
-  --muted-foreground: 240 4% 46%;
-  --accent: 260 85% 68%;
-  --accent-foreground: 0 0% 98%;
-  --success: 150 80% 45%;
-  --success-foreground: 0 0% 98%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 0 0% 98%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 6% 90%;
-  --input: 240 6% 90%;
-  --ring: 260 85% 68%;
-  --radius: 0.75rem;
-  --gradient-primary: linear-gradient(135deg, hsl(260 85% 68%), hsl(280 90% 72%));
-  --gradient-bg: linear-gradient(135deg, hsl(240 15% 8%), hsl(240 12% 11%));
-  --gradient-berry: linear-gradient(135deg, hsl(260 85% 68%), hsl(230 80% 65%));
+@layer base {
+  :root {
+    /* Base colors */
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Primary - Professional Blue */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Soft blue-gray */
+    --secondary: 214 32% 91%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Semantic Status Colors */
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    --danger: 0 84% 60%;
+    --danger-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.5rem;
+
+    /* Dashboard specific */
+    --dashboard-bg: 210 20% 98%;
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 32% 95%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 217 91% 60%;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    --danger: 0 84% 60%;
+    --danger-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+
+    --dashboard-bg: 222 47% 6%;
+
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 17%;
+    --sidebar-ring: 217 91% 60%;
+  }
 }
 
-html {
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-dashboard text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
 }
 
-.dark {
-  --background: 240 15% 8%;
-  --foreground: 240 5% 98%;
-  --card: 240 12% 11%;
-  --card-foreground: 240 5% 98%;
-  --popover: 240 15% 8%;
-  --popover-foreground: 240 5% 98%;
-  --primary: 240 5% 98%;
-  --primary-foreground: 240 15% 8%;
-  --secondary: 240 8% 15%;
-  --secondary-foreground: 240 5% 98%;
-  --muted: 240 6% 18%;
-  --muted-foreground: 240 5% 65%;
-  --accent: 260 85% 68%;
-  --accent-foreground: 240 5% 98%;
-  --success: 150 80% 55%;
-  --success-foreground: 240 15% 8%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 0 0% 100%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 240 5% 98%;
-  --border: 240 8% 20%;
-  --input: 240 8% 15%;
+@layer components {
+  /* Status indicator dots */
+  .status-dot {
+    @apply w-3 h-3 rounded-full flex-shrink-0;
+  }
+  
+  .status-dot-healthy {
+    @apply bg-success;
+    box-shadow: 0 0 0 3px hsl(var(--success) / 0.2);
+  }
+  
+  .status-dot-warning {
+    @apply bg-warning;
+    box-shadow: 0 0 0 3px hsl(var(--warning) / 0.2);
+  }
+  
+  .status-dot-critical {
+    @apply bg-danger;
+    box-shadow: 0 0 0 3px hsl(var(--danger) / 0.2);
+    animation: pulse-danger 2s infinite;
+  }
+
+  /* Project card status border */
+  .project-card {
+    @apply bg-card rounded-lg border transition-all duration-200 cursor-pointer;
+    box-shadow: var(--card-shadow);
+  }
+  
+  .project-card:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
+  }
+  
+  .project-card-healthy {
+    @apply border-l-4 border-l-success;
+  }
+  
+  .project-card-warning {
+    @apply border-l-4 border-l-warning;
+  }
+  
+  .project-card-critical {
+    @apply border-l-4 border-l-danger;
+  }
+
+  /* Summary cards */
+  .summary-card {
+    @apply bg-card rounded-lg p-5 border;
+    box-shadow: var(--card-shadow);
+  }
+
+  /* Environment badges - neutral styling */
+  .env-badge {
+    @apply px-2 py-0.5 text-xs font-medium rounded-full inline-flex items-center gap-1;
+    @apply bg-muted text-muted-foreground border border-border;
+  }
+  
+  .env-badge-dev,
+  .env-badge-staging,
+  .env-badge-prod {
+    /* All use the same neutral styling - status shown via icon only */
+  }
+
+  /* Alert banner */
+  .alert-banner {
+    @apply rounded-lg p-4 flex items-center gap-3;
+  }
+  
+  .alert-banner-warning {
+    @apply bg-warning/10 border border-warning/20 text-warning;
+  }
+}
+
+@layer utilities {
+  .bg-dashboard {
+    background-color: hsl(var(--dashboard-bg));
+  }
+}
+
+@keyframes pulse-danger {
+  0%, 100% {
+    box-shadow: 0 0 0 3px hsl(var(--danger) / 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 6px hsl(var(--danger) / 0.1);
+  }
 }

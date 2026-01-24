@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["vitest/globals"],
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
@@ -8,14 +9,10 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": false,
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": false,
-    "emitDeclarationOnly": false,
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "dist",
+    "noEmit": true,
     "jsx": "react-jsx",
 
     /* Linting */
@@ -30,6 +27,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/**/*.stories.tsx", "src/**/*.test.tsx", "src/main.tsx", "src/App.tsx", "src/pages/**/*", "src/stories/**/*"]
+  "include": ["src"]
 }

@@ -22,21 +22,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Environment files with secrets
-.env
-.env.local
-.env.*.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Security and credentials
-*.pem
-*.key
-*.cert
-credentials.json
-secrets.json
-
-# Supabase
-.supabase
+supabase/.env.local
