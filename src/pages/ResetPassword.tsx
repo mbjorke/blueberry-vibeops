@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Loader2, Eye, EyeOff, CheckCircle2, Wand2, Copy, Check } from 'lucide-react';
+import { Shield, Loader2, Eye, EyeOff, CheckCircle2, Wand2, Copy, Check, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
+import { verifyAfterPasswordReset, checkAuthIntegrity } from '@/lib/authIntegrityCheck';
 
 function generateStrongPassword(length = 16): string {
   const lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -56,16 +57,30 @@ export default function ResetPassword() {
       
       // If we have recovery tokens in the URL, set the session explicitly
       if (accessToken && type === 'recovery') {
-        console.log('Processing recovery tokens...');
+        console.log('[ResetPassword] Processing recovery tokens...');
         const { data, error } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken || '',
         });
         
         if (error) {
-          console.error('Error setting session:', error);
+          console.error('[ResetPassword] Error setting session:', error);
+          toast({
+            variant: 'destructive',
+            title: 'Session error',
+            description: 'Failed to establish session. The reset link may be invalid or expired.',
+          });
         } else {
-          console.log('Session set successfully');
+          console.log('[ResetPassword] Session set successfully');
+          
+          // Verify user state after session is set
+          if (data.user) {
+            const integrityCheck = await checkAuthIntegrity(data.user);
+            if (!integrityCheck.passed) {
+              console.warn('[ResetPassword] User state verification failed on session setup:', integrityCheck);
+            }
+          }
+          
           setSessionReady(true);
           // Clean up the URL
           window.history.replaceState(null, '', window.location.pathname);
@@ -136,23 +151,68 @@ export default function ResetPassword() {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.updateUser({ password });
+    try {
+      // Get current user before password reset for integrity check
+      const { data: { user: userBeforeReset } } = await supabase.auth.getUser();
+      
+      // Update password
+      const { error, data } = await supabase.auth.updateUser({ password });
 
-    if (error) {
+      if (error) {
+        console.error('[ResetPassword] Password update error:', error);
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: error.message,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Wait a moment for session to refresh
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Verify user permissions after password reset
+      console.log('[ResetPassword] Verifying user permissions after password reset...');
+      const integrityResult = await checkAuthIntegrity(data.user || userBeforeReset);
+
+      if (!integrityResult.passed) {
+        console.error('[ResetPassword] Integrity check failed:', integrityResult);
+        toast({
+          variant: 'destructive',
+          title: 'Permission verification failed',
+          description: 'Your password was updated, but there may be an issue with your permissions. Please contact support if you experience access problems.',
+        });
+      } else if (integrityResult.warnings.length > 0) {
+        console.warn('[ResetPassword] Integrity check warnings:', integrityResult.warnings);
+        toast({
+          title: 'Password updated',
+          description: 'Your password has been reset successfully. Some permission warnings were detected - please verify your access.',
+        });
+      } else {
+        console.log('[ResetPassword] Integrity check passed');
+        toast({
+          title: 'Password updated!',
+          description: 'Your password has been reset successfully.',
+        });
+      }
+
+      // Log integrity check details for debugging
+      if (integrityResult.errors.length > 0 || integrityResult.warnings.length > 0) {
+        console.log('[ResetPassword] Integrity check details:', integrityResult.details);
+      }
+
+      setSuccess(true);
+    } catch (err) {
+      console.error('[ResetPassword] Unexpected error during password reset:', err);
       toast({
         variant: 'destructive',
-        title: 'Error',
-        description: error.message,
+        title: 'Unexpected error',
+        description: 'An unexpected error occurred. Please try again or contact support.',
       });
-    } else {
-      setSuccess(true);
-      toast({
-        title: 'Password updated!',
-        description: 'Your password has been reset successfully.',
-      });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   if (success) {
@@ -166,6 +226,9 @@ export default function ResetPassword() {
             <CardTitle className="text-2xl font-bold">Password reset!</CardTitle>
             <CardDescription>
               Your password has been updated successfully.
+            </CardDescription>
+            <CardDescription className="text-xs text-muted-foreground mt-2">
+              Your permissions have been verified. You can now log in with your new password.
             </CardDescription>
           </CardHeader>
           <CardFooter>

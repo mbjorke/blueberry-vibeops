@@ -1,4 +1,4 @@
-import { Shield, AlertTriangle, AlertCircle, CheckCircle, Info, Clock } from 'lucide-react';
+import { Shield, AlertTriangle, AlertCircle, CheckCircle, Info, Clock, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,9 @@ interface SecurityScanReportProps {
   loading?: boolean;
   githubUrl?: string;
   repoFullName?: string;
+  projectId?: string;
   onUpdateStatus?: (findingId: string, status: SecurityFinding['status']) => Promise<void>;
+  onSyncDependabot?: () => Promise<void>;
 }
 
 const severityConfig = {
@@ -80,7 +82,7 @@ function StatusBadge({ status }: { status: SecurityFinding['status'] }) {
   );
 }
 
-export function SecurityScanReport({ findings, securityScore, loading, githubUrl, repoFullName }: SecurityScanReportProps) {
+export function SecurityScanReport({ findings, securityScore, loading, githubUrl, repoFullName, projectId, onSyncDependabot }: SecurityScanReportProps) {
   const openFindings = findings.filter(f => f.status === 'open' || f.status === 'in_progress');
   const resolvedFindings = findings.filter(f => f.status === 'fixed' || f.status === 'ignored');
   
@@ -102,6 +104,28 @@ export function SecurityScanReport({ findings, securityScore, loading, githubUrl
 
   return (
     <div className="space-y-6">
+      {/* Sync Dependabot Alerts Button */}
+      {repoFullName && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium">GitHub Dependency Vulnerabilities</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Sync Dependabot alerts from GitHub to see dependency vulnerabilities
+                </p>
+              </div>
+              {onSyncDependabot && (
+                <Button onClick={onSyncDependabot} variant="outline" size="sm">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Sync Dependabot Alerts
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Score Overview */}
       <Card>
         <CardHeader>

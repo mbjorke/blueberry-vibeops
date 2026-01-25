@@ -17,6 +17,8 @@ A SaaS security, compliance, and operations dashboard for managing client projec
 - `npm run db:stop`: Stop local Supabase
 - `npm run db:reset`: Reset database and apply all migrations fresh
 - `npm run db:migrate`: Push migrations to database
+- `npm run seed:test-users`: Create test users in database (for integration tests)
+- `npm run seed:test-users:reset`: Reset and recreate test users
 
 ## Remote Supabase Commands
 

@@ -237,6 +237,63 @@ async function getRepoEnvironments(repoFullName: string): Promise<{ environments
   throw new Error('No installation found with access to this repository');
 }
 
+async function getDependabotAlerts(repoFullName: string): Promise<unknown[]> {
+  // First get all installations to find the one with access to this repo
+  const installations = await listInstallations();
+  
+  for (const installation of installations as Array<{ id: number }>) {
+    try {
+      const { token } = await getInstallationToken(installation.id);
+      
+      // Check if we have access to this repo
+      const repoCheck = await fetch(`https://api.github.com/repos/${repoFullName}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+      });
+      
+      if (!repoCheck.ok) continue;
+      
+      // Fetch Dependabot alerts
+      const response = await fetch(`https://api.github.com/repos/${repoFullName}/dependabot/alerts`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+      });
+
+      if (response.status === 404) {
+        // Dependabot alerts not enabled or no alerts
+        return [];
+      }
+      
+      if (response.status === 403) {
+        // Missing permission - need "Security events: Read" permission
+        throw new Error('MISSING_DEPENDABOT_PERMISSION');
+      }
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Failed to get Dependabot alerts: ${response.status} - ${error}`);
+      }
+
+      const data = await response.json();
+      return data || [];
+    } catch (error) {
+      if (error instanceof Error && error.message === 'MISSING_DEPENDABOT_PERMISSION') {
+        throw error;
+      }
+      // Try next installation
+      continue;
+    }
+  }
+  
+  throw new Error('No installation found with access to this repository');
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -348,11 +405,44 @@ serve(async (req) => {
         }
       }
 
+      case 'list-dependabot-alerts': {
+        const repoFullName = url.searchParams.get('repo');
+        if (!repoFullName) {
+          return new Response(
+            JSON.stringify({ error: 'repo parameter is required (format: owner/repo)' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        try {
+          const alerts = await getDependabotAlerts(repoFullName);
+          return new Response(
+            JSON.stringify({ alerts }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        } catch (error) {
+          if (error instanceof Error && error.message === 'MISSING_DEPENDABOT_PERMISSION') {
+            return new Response(
+              JSON.stringify({ 
+                error: 'Missing GitHub App permission',
+                errorCode: 'MISSING_DEPENDABOT_PERMISSION',
+                message: "The GitHub App needs 'Security events: Read' permission to view Dependabot alerts."
+              }),
+              { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+          const message = error instanceof Error ? error.message : 'Unknown error';
+          return new Response(
+            JSON.stringify({ error: message }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+
       default:
         return new Response(
           JSON.stringify({ 
             error: 'Invalid action',
-            available_actions: ['test', 'list-installations', 'get-token', 'list-repos', 'get-repo', 'list-environments']
+            available_actions: ['test', 'list-installations', 'get-token', 'list-repos', 'get-repo', 'list-environments', 'list-dependabot-alerts']
           }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );

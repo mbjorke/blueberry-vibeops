@@ -191,7 +191,122 @@ export default function ProjectDetail() {
     loading: detailDataLoading,
     toggleGDPRItem,
     updateFindingStatus,
+    refetch: refetchDetailData,
   } = useProjectDetailData(projectId || '');
+  
+  // Sync Dependabot alerts from GitHub
+  const handleSyncDependabot = async () => {
+    if (!repoFullName || !projectId) {
+      toast.error('Repository information is required to sync Dependabot alerts.');
+      return;
+    }
+
+    try {
+      // Fetch Dependabot alerts from GitHub
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/github-app-auth?action=list-dependabot-alerts&repo=${encodeURIComponent(repoFullName)}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.errorCode === 'MISSING_DEPENDABOT_PERMISSION') {
+        toast.error('The GitHub App needs "Security events: Read" permission to fetch Dependabot alerts.');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch Dependabot alerts');
+      }
+
+      const alerts = data.alerts || [];
+      
+      if (alerts.length === 0) {
+        toast.info('No Dependabot alerts found for this repository.');
+        return;
+      }
+
+      // Map GitHub alerts to security findings and upsert them
+      const findingsToUpsert = alerts.map((alert: any) => {
+        // Map GitHub severity to our severity levels
+        const severityMap: Record<string, 'critical' | 'high' | 'medium' | 'low'> = {
+          'critical': 'critical',
+          'high': 'high',
+          'moderate': 'medium',
+          'medium': 'medium',
+          'low': 'low',
+        };
+
+        const severity = severityMap[alert.security_vulnerability?.severity?.toLowerCase() || 'low'] || 'low';
+        const dependency = alert.dependency?.package?.name || 'Unknown';
+        const vulnerability = alert.security_vulnerability;
+        const cve = vulnerability?.cve_id || '';
+        const summary = vulnerability?.summary || '';
+        const description = vulnerability?.description || summary || `Vulnerability in ${dependency}`;
+
+        return {
+          project_id: projectId,
+          title: `Dependency vulnerability: ${dependency}${cve ? ` (${cve})` : ''}`,
+          description: description,
+          severity: severity,
+          status: alert.state === 'dismissed' ? 'ignored' : alert.state === 'fixed' ? 'fixed' : 'open',
+          category: 'Dependencies',
+          recommendation: vulnerability?.first_patched_version 
+            ? `Update ${dependency} to version ${vulnerability.first_patched_version.identifier} or later`
+            : `Update ${dependency} to a patched version`,
+          // Store GitHub alert number for reference
+          file_path: `package.json`,
+          created_at: alert.created_at || new Date().toISOString(),
+        };
+      });
+
+      // Insert or update findings - check for existing ones by title
+      let syncedCount = 0;
+      for (const finding of findingsToUpsert) {
+        // Check if finding already exists by title and project_id
+        const { data: existing } = await supabase
+          .from('security_findings')
+          .select('id')
+          .eq('project_id', finding.project_id)
+          .eq('title', finding.title)
+          .maybeSingle();
+
+        if (existing) {
+          // Update existing finding
+          const { error: updateError } = await supabase
+            .from('security_findings')
+            .update({
+              description: finding.description,
+              severity: finding.severity,
+              status: finding.status,
+              recommendation: finding.recommendation,
+            })
+            .eq('id', existing.id);
+          
+          if (!updateError) syncedCount++;
+        } else {
+          // Insert new finding
+          const { error: insertError } = await supabase
+            .from('security_findings')
+            .insert(finding);
+          
+          if (!insertError) syncedCount++;
+        }
+      }
+
+      toast.success(`Synced ${syncedCount} dependency vulnerability alert${syncedCount === 1 ? '' : 's'} from GitHub.`);
+
+      // Refetch to show new findings
+      await refetchDetailData();
+    } catch (error) {
+      console.error('Error syncing Dependabot alerts:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to sync Dependabot alerts.');
+    }
+  };
   
   // Use real-time activity hook
   const { events: realtimeEvents, loading: activityLoading, isRealtime } = useRealtimeActivity({
@@ -498,6 +613,8 @@ export default function ProjectDetail() {
               onUpdateStatus={updateFindingStatus}
               githubUrl={githubUrl || undefined}
               repoFullName={repoFullName || undefined}
+              projectId={projectId}
+              onSyncDependabot={handleSyncDependabot}
             />
           </TabsContent>
 
