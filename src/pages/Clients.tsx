@@ -48,6 +48,7 @@ import { useClients, type Client } from "@/hooks/useClients";
 import { useRepositories } from "@/hooks/useRepositories";
 import { useToast } from "@/hooks/use-toast";
 import { CreateClientDialog } from "@/components/clients/CreateClientDialog";
+import { ClientOnboardingWizard } from "@/components/onboarding/ClientOnboardingWizard";
 import { AssignRepoDialog } from "@/components/clients/AssignRepoDialog";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,7 @@ const Clients = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedClients, setExpandedClients] = useState<Set<string>>(new Set());
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showOnboardingWizard, setShowOnboardingWizard] = useState(false);
   const [assignRepoClient, setAssignRepoClient] = useState<Client | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Client | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -107,9 +109,9 @@ const Clients = () => {
   const totalMRR = clients.reduce((sum, client) => sum + (client.monthly_rate || 0), 0);
 
   const headerActions = (
-    <Button onClick={() => setShowCreateDialog(true)}>
+    <Button onClick={() => setShowOnboardingWizard(true)}>
       <Plus className="mr-2 h-4 w-4" />
-      New Client
+      Onboard Client
     </Button>
   );
 
@@ -236,9 +238,16 @@ const Clients = () => {
         )}
 
         {/* Dialogs */}
+        {/* Client Onboarding Wizard */}
+        <ClientOnboardingWizard 
+          open={showOnboardingWizard} 
+          onOpenChange={setShowOnboardingWizard} 
+        />
+        
+        {/* Keep CreateClientDialog for quick create option if needed */}
         <CreateClientDialog 
-          open={showCreateDialog} 
-          onOpenChange={setShowCreateDialog} 
+          open={showCreateDialog}
+          onOpenChange={setShowCreateDialog}
         />
         
         <AssignRepoDialog

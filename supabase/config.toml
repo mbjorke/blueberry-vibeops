@@ -20,18 +20,35 @@ port = 54323
 [auth]
 enabled = true
 site_url = "http://localhost:8080"
-additional_redirect_urls = ["http://localhost:8080", "http://127.0.0.1:8080"]
+additional_redirect_urls = [
+  "http://localhost:8080",
+  "http://127.0.0.1:8080",
+  "http://localhost:8080/reset-password",
+  "http://127.0.0.1:8080/reset-password",
+  "http://localhost:5173/reset-password",
+  "http://127.0.0.1:5173/reset-password"
+]
 
 [auth.email]
 enable_signup = true
 double_confirm_changes = false
 enable_confirmations = false
+# Password reset emails are always enabled in local dev
 
 # Note: Local Supabase uses built-in Inbucket/Mailpit for emails
 # No SMTP config needed - emails go to http://127.0.0.1:54324 automatically
+
+# Edge Functions Configuration
+# Note: JWT verification is disabled for these functions as they use custom authentication
+# (GitHub App JWTs with RS256 algorithm for GitHub API, webhook signatures, etc.)
+# The "alg Algorithm Header Parameter value not allowed" error during startup is a known
+# non-fatal warning in Supabase CLI 2.72.7+ and can be safely ignored.
 
 [functions.github-app-auth]
 verify_jwt = false
 
 [functions.github-create-issue]
+verify_jwt = false
+
+[functions.github-app-webhook]
 verify_jwt = false

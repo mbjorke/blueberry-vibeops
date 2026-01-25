@@ -48,7 +48,7 @@ export function GitHubImportDialog({ trigger }: GitHubImportDialogProps) {
   const [importing, setImporting] = useState(false);
 
   const { installations, repositories, loading, error, fetchInstallations, fetchRepositories } = useGitHubApp();
-  const { user } = useAuth();
+  const { user, currentOrganization } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -99,6 +99,16 @@ export function GitHubImportDialog({ trigger }: GitHubImportDialogProps) {
 
     const reposToImport = repositories.filter(r => selectedRepos.has(r.id));
 
+    if (!currentOrganization?.id) {
+      toast({
+        variant: 'destructive',
+        title: 'No organization selected',
+        description: 'Please select an organization before importing repositories.',
+      });
+      setImporting(false);
+      return;
+    }
+
     for (const repo of reposToImport) {
       try {
         // Generate a color based on repo name
@@ -119,6 +129,7 @@ export function GitHubImportDialog({ trigger }: GitHubImportDialogProps) {
           language: repo.language,
           stars_count: repo.stargazers_count,
           created_by: user?.id,
+          organization_id: currentOrganization.id,
         });
 
         if (insertError) {

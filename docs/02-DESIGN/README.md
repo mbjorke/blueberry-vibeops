@@ -9,6 +9,7 @@ Technical design documents and architecture decisions.
 - **[AUTH_STRATEGY.md](./AUTH_STRATEGY.md)** - Authentication approach (reference)
 - **[PUBLIC_DISCOVERY_DESIGN.md](./PUBLIC_DISCOVERY_DESIGN.md)** - Public insights design
 - **[NAVIGATION_DESIGN.md](./NAVIGATION_DESIGN.md)** - Navigation structure design
+- **[TESTING.md](./TESTING.md)** - Test coverage, patterns, and best practices
 
 ## Purpose
 

@@ -57,7 +57,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (dbError) {
       console.error("Database error:", dbError);
       return new Response(
-        JSON.stringify({ error: "Failed to create invitation" }),
+        JSON.stringify({ error: "Failed to create invitation", details: dbError.message, code: dbError.code }),
         { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
@@ -72,17 +72,33 @@ const handler = async (req: Request): Promise<Response> => {
     // Get organization name if available
     let organizationName = "";
     if (organizationId) {
-      const { data: org } = await supabase
+      const { data: org, error: orgError } = await supabase
         .from("clients")
         .select("name")
         .eq("id", organizationId)
         .single();
-      organizationName = org?.name || "";
+      if (!orgError && org) {
+        organizationName = org.name || "";
+      }
     }
 
     const inviterName = inviterProfile?.full_name || "An administrator";
     const baseUrl = req.headers.get("origin") || "https://vibeops.app";
     const signupUrl = `${baseUrl}/signup?token=${invitation.token}`;
+
+    // Check if RESEND_API_KEY is configured
+    if (!Deno.env.get("RESEND_API_KEY")) {
+      console.warn("RESEND_API_KEY not configured, skipping email send");
+      // Still return success since invitation was created
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          invitation: { id: invitation.id, email },
+          warning: "Invitation created but email not sent (RESEND_API_KEY not configured)"
+        }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     // Send invitation email
     const emailResponse = await resend.emails.send({
@@ -137,6 +153,20 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Invitation email sent:", emailResponse);
 
+    if (emailResponse.error) {
+      console.error("Resend API error:", emailResponse.error);
+      // Still return success since invitation was created
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          invitation: { id: invitation.id, email },
+          warning: "Invitation created but email failed to send",
+          emailError: emailResponse.error
+        }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     return new Response(
       JSON.stringify({ success: true, invitation: { id: invitation.id, email } }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -144,7 +174,10 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error in send-invitation:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message || "Unknown error",
+        stack: error.stack 
+      }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }

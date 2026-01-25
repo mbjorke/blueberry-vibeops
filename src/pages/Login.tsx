@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Shield, Loader2, Github, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { MockLogin } from '@/components/auth/MockLogin';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -62,6 +63,11 @@ export default function Login() {
               Manage clients, track security, and streamline deployments.
             </p>
           </div>
+
+          {/* Mock Login (Dev Mode Only) */}
+          {import.meta.env.DEV && (
+            <MockLogin />
+          )}
 
           {/* Login Card */}
           <Card>

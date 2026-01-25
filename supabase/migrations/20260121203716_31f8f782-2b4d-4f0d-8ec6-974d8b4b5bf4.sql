@@ -22,7 +22,7 @@ ALTER TABLE public.invitations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can manage invitations"
 ON public.invitations
 FOR ALL
-USING (has_role(auth.uid(), 'admin'::app_role));
+USING (has_role((SELECT auth.uid()), 'admin'::app_role));
 
 -- Anyone can view invitation by token (for accepting)
 CREATE POLICY "Anyone can view invitation by token"

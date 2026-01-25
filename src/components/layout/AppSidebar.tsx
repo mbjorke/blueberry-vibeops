@@ -1,5 +1,6 @@
 import { Building2, FolderGit2, Settings, BookOpen, HelpCircle, Users } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -36,15 +37,23 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const location = useLocation();
-  const { isAdmin } = useAuth();
+  const { isAdmin, currentOrganization, organizations, setCurrentOrganization } = useAuth();
   const { profile } = useProfile();
+
+  // Ensure currentOrganization is set if organizations are available
+  useEffect(() => {
+    if (!currentOrganization && organizations.length > 0) {
+      setCurrentOrganization(organizations[0]);
+    }
+  }, [currentOrganization, organizations, setCurrentOrganization]);
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
 
-  // Determine what to show in the header
-  const displayName = profile?.display_name || profile?.company_name || 'VibeOps';
-  const logoUrl = profile?.logo_url;
-  const initials = displayName.charAt(0).toUpperCase();
+  // Determine what to show in the header - use organization name if available, fallback to profile
+  const displayName = currentOrganization?.name || profile?.display_name || profile?.company_name || 'VibeOps';
+  const logoInitial = currentOrganization?.logo_initial || displayName.charAt(0).toUpperCase();
+  const logoColor = currentOrganization?.logo_color || 'bg-primary';
+  const logoUrl = profile?.logo_url; // Still allow profile logo if set
 
   return (
     <Sidebar collapsible="icon">
@@ -53,19 +62,19 @@ export function AppSidebar() {
           {logoUrl ? (
             <Avatar className="h-8 w-8 rounded-lg flex-shrink-0">
               <AvatarImage src={logoUrl} alt={displayName} className="object-cover" />
-              <AvatarFallback className="rounded-lg bg-primary text-primary-foreground font-bold text-sm">
-                {initials}
+              <AvatarFallback className={`rounded-lg ${logoColor} text-white font-bold text-sm`}>
+                {logoInitial}
               </AvatarFallback>
             </Avatar>
           ) : (
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-sm">{initials}</span>
+            <div className={`w-8 h-8 ${logoColor} rounded-lg flex items-center justify-center flex-shrink-0`}>
+              <span className="text-white font-bold text-sm">{logoInitial}</span>
             </div>
           )}
           {!collapsed && (
             <div className="flex flex-col min-w-0">
               <span className="font-semibold text-base truncate">{displayName}</span>
-              {profile?.company_name && displayName !== profile.company_name && (
+              {currentOrganization && profile?.company_name && displayName !== profile.company_name && (
                 <span className="text-xs text-muted-foreground truncate">{profile.company_name}</span>
               )}
             </div>

@@ -225,13 +225,13 @@ export function GitHubConnectionManager({ trigger }: GitHubConnectionManagerProp
               
               <Button variant="link" size="sm" className="mt-2 p-0 h-auto" asChild>
                 <a 
-                  href="https://github.com/apps/blueberry-ops/installations/new" 
+                  href="https://github.com/apps/blueberry-ops/installations/new?state=new" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-xs"
                 >
                   <ExternalLink className="h-3 w-3 mr-1" />
-                  Add another account
+                  Install on another account
                 </a>
               </Button>
             </section>

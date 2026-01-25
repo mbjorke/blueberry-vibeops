@@ -138,6 +138,45 @@ async function getInstallationRepos(installationId: number): Promise<unknown[]> 
   return data.repositories || [];
 }
 
+async function getRepository(owner: string, repo: string): Promise<unknown> {
+  // First get all installations to find the one with access to this repo
+  const installations = await listInstallations();
+  const repoFullName = `${owner}/${repo}`;
+  
+  for (const installation of installations as Array<{ id: number }>) {
+    try {
+      const { token } = await getInstallationToken(installation.id);
+      
+      // Fetch repository info
+      const response = await fetch(`https://api.github.com/repos/${repoFullName}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+      });
+      
+      if (response.ok) {
+        return await response.json();
+      }
+      
+      // If 404 or 403, try next installation
+      if (response.status === 404 || response.status === 403) {
+        continue;
+      }
+      
+      // For other errors, throw
+      const error = await response.text();
+      throw new Error(`Failed to get repository: ${response.status} - ${error}`);
+    } catch (error) {
+      // Try next installation
+      continue;
+    }
+  }
+  
+  throw new Error('No installation found with access to this repository');
+}
+
 async function getRepoEnvironments(repoFullName: string): Promise<{ environments: unknown[]; total_count: number }> {
   // First get all installations to find the one with access to this repo
   const installations = await listInstallations();
@@ -256,6 +295,30 @@ serve(async (req) => {
         );
       }
 
+      case 'get-repo': {
+        const owner = url.searchParams.get('owner');
+        const repo = url.searchParams.get('repo');
+        if (!owner || !repo) {
+          return new Response(
+            JSON.stringify({ error: 'owner and repo parameters are required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        try {
+          const repository = await getRepository(owner, repo);
+          return new Response(
+            JSON.stringify({ repository }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Unknown error';
+          return new Response(
+            JSON.stringify({ error: message }),
+            { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+
       case 'list-environments': {
         const repoFullName = url.searchParams.get('repo');
         if (!repoFullName) {
@@ -289,7 +352,7 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({ 
             error: 'Invalid action',
-            available_actions: ['test', 'list-installations', 'get-token', 'list-repos', 'list-environments']
+            available_actions: ['test', 'list-installations', 'get-token', 'list-repos', 'get-repo', 'list-environments']
           }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );

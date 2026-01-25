@@ -25,16 +25,16 @@ USING (
   EXISTS (
     SELECT 1 FROM public.client_projects
     WHERE client_projects.project_id = activity_events.project_id
-    AND client_projects.user_id = auth.uid()
+    AND client_projects.user_id = (SELECT auth.uid())
   )
-  OR has_role(auth.uid(), 'admin'::app_role)
+  OR has_role((SELECT auth.uid()), 'admin'::app_role)
 );
 
 -- Only admins can insert activity events
 CREATE POLICY "Admins can insert activity events"
 ON public.activity_events
 FOR INSERT
-WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
+WITH CHECK (has_role((SELECT auth.uid()), 'admin'::app_role));
 
 -- Enable realtime for this table
 ALTER PUBLICATION supabase_realtime ADD TABLE public.activity_events;

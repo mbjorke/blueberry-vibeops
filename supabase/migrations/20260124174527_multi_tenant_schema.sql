@@ -20,7 +20,7 @@ RETURNS UUID[] AS $$
   SELECT COALESCE(ARRAY_AGG(client_id), '{}')
   FROM client_users 
   WHERE client_users.user_id = p_user_id
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 
 -- 6. Create helper function to check if user is org admin for a specific org
 CREATE OR REPLACE FUNCTION is_org_admin(p_user_id UUID, p_org_id UUID)
@@ -31,7 +31,7 @@ RETURNS BOOLEAN AS $$
     AND client_id = p_org_id 
     AND is_org_admin = true
   )
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 
 -- 7. Create helper function to check if user is member of an org
 CREATE OR REPLACE FUNCTION is_org_member(p_user_id UUID, p_org_id UUID)
@@ -41,7 +41,7 @@ RETURNS BOOLEAN AS $$
     WHERE user_id = p_user_id 
     AND client_id = p_org_id
   )
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 
 -- Add comments for documentation
 COMMENT ON COLUMN client_users.is_org_admin IS 'Whether this user is an admin of this organization (can manage members, repos, settings)';

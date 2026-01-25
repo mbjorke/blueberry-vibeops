@@ -32,8 +32,8 @@ ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can manage all projects"
 ON public.projects
 FOR ALL
-USING (public.has_role(auth.uid(), 'admin'))
-WITH CHECK (public.has_role(auth.uid(), 'admin'));
+USING (public.has_role((SELECT auth.uid()), 'admin'))
+WITH CHECK (public.has_role((SELECT auth.uid()), 'admin'));
 
 -- Clients can view projects assigned to them
 CREATE POLICY "Clients can view assigned projects"
@@ -43,7 +43,7 @@ USING (
   EXISTS (
     SELECT 1 FROM public.client_projects cp
     WHERE cp.project_id = projects.id::text
-    AND cp.user_id = auth.uid()
+    AND cp.user_id = (SELECT auth.uid())
   )
 );
 

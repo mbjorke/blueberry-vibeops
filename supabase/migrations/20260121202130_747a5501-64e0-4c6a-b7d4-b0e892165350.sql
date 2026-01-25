@@ -54,37 +54,37 @@ $$;
 -- Profiles RLS policies
 CREATE POLICY "Users can view own profile"
   ON public.profiles FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update own profile"
   ON public.profiles FOR UPDATE
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert own profile"
   ON public.profiles FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Admins can view all profiles"
   ON public.profiles FOR SELECT
-  USING (public.has_role(auth.uid(), 'admin'));
+  USING (public.has_role((SELECT auth.uid()), 'admin'));
 
 -- User roles RLS policies
 CREATE POLICY "Users can view own roles"
   ON public.user_roles FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Admins can manage all roles"
   ON public.user_roles FOR ALL
-  USING (public.has_role(auth.uid(), 'admin'));
+  USING (public.has_role((SELECT auth.uid()), 'admin'));
 
 -- Client projects RLS policies
 CREATE POLICY "Users can view own project assignments"
   ON public.client_projects FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Admins can manage all project assignments"
   ON public.client_projects FOR ALL
-  USING (public.has_role(auth.uid(), 'admin'));
+  USING (public.has_role((SELECT auth.uid()), 'admin'));
 
 -- Create function to auto-create profile and role on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()

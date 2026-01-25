@@ -18,23 +18,34 @@ export default function ForgotPassword() {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+    const redirectUrl = `${window.location.origin}/reset-password`;
+    console.log('Requesting password reset for:', email);
+    console.log('Redirect URL:', redirectUrl);
+
+    const { error, data } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl,
     });
 
     if (error) {
+      console.error('Password reset error:', error);
       toast({
         variant: 'destructive',
         title: 'Error',
         description: error.message,
       });
-    } else {
-      setSent(true);
-      toast({
-        title: 'Check your email',
-        description: 'We sent you a password reset link.',
-      });
+      setLoading(false);
+      return;
     }
+
+    console.log('Password reset request successful:', data);
+    
+    // Note: Supabase returns success even if user doesn't exist (security feature)
+    // So we can't tell the user if their email exists or not
+    setSent(true);
+    toast({
+      title: 'Check your email',
+      description: `If an account exists for ${email}, we sent a password reset link. Check Mailpit at http://127.0.0.1:54324 if you don't see it.`,
+    });
 
     setLoading(false);
   };
@@ -49,11 +60,32 @@ export default function ForgotPassword() {
             </div>
             <CardTitle className="text-2xl font-bold">Check your email</CardTitle>
             <CardDescription>
-              We sent a password reset link to <strong>{email}</strong>
+              If an account exists for <strong>{email}</strong>, we sent a password reset link.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center text-sm text-muted-foreground">
+          <CardContent className="text-center text-sm text-muted-foreground space-y-2">
             <p>Click the link in the email to reset your password.</p>
+            <p className="text-xs text-muted-foreground/80">
+              Note: For security, we don't reveal if an email exists. If you don't receive an email, the account may not exist.
+            </p>
+            {import.meta.env.DEV && (
+              <div className="mt-4 p-3 bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+                <p className="text-xs font-medium text-orange-900 dark:text-orange-200 mb-1">
+                  Development Mode
+                </p>
+                <p className="text-xs text-orange-800 dark:text-orange-300">
+                  Check Mailpit for the reset email:{' '}
+                  <a 
+                    href="http://127.0.0.1:54324" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="underline font-medium hover:text-orange-900"
+                  >
+                    http://127.0.0.1:54324
+                  </a>
+                </p>
+              </div>
+            )}
             <p className="mt-2">Didn't receive the email? Check your spam folder or try again.</p>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">

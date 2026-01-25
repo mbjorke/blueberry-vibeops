@@ -64,22 +64,22 @@ ALTER TABLE public.client_users ENABLE ROW LEVEL SECURITY;
 -- CLIENTS RLS
 CREATE POLICY "Admins can manage all clients"
   ON public.clients FOR ALL
-  USING (has_role(auth.uid(), 'admin'))
-  WITH CHECK (has_role(auth.uid(), 'admin'));
+  USING (has_role((SELECT auth.uid()), 'admin'))
+  WITH CHECK (has_role((SELECT auth.uid()), 'admin'));
 
 CREATE POLICY "Users can view clients they belong to"
   ON public.clients FOR SELECT
   USING (EXISTS (
     SELECT 1 FROM public.client_users
     WHERE client_users.client_id = clients.id
-    AND client_users.user_id = auth.uid()
+    AND client_users.user_id = (SELECT auth.uid())
   ));
 
 -- REPOSITORIES RLS
 CREATE POLICY "Admins can manage all repositories"
   ON public.repositories FOR ALL
-  USING (has_role(auth.uid(), 'admin'))
-  WITH CHECK (has_role(auth.uid(), 'admin'));
+  USING (has_role((SELECT auth.uid()), 'admin'))
+  WITH CHECK (has_role((SELECT auth.uid()), 'admin'));
 
 CREATE POLICY "Users can view repos for their clients"
   ON public.repositories FOR SELECT
@@ -87,32 +87,32 @@ CREATE POLICY "Users can view repos for their clients"
     SELECT 1 FROM public.client_repos cr
     JOIN public.client_users cu ON cu.client_id = cr.client_id
     WHERE cr.repo_id = repositories.id
-    AND cu.user_id = auth.uid()
+    AND cu.user_id = (SELECT auth.uid())
   ));
 
 -- CLIENT_REPOS RLS
 CREATE POLICY "Admins can manage client repo assignments"
   ON public.client_repos FOR ALL
-  USING (has_role(auth.uid(), 'admin'))
-  WITH CHECK (has_role(auth.uid(), 'admin'));
+  USING (has_role((SELECT auth.uid()), 'admin'))
+  WITH CHECK (has_role((SELECT auth.uid()), 'admin'));
 
 CREATE POLICY "Users can view their client repo assignments"
   ON public.client_repos FOR SELECT
   USING (EXISTS (
     SELECT 1 FROM public.client_users
     WHERE client_users.client_id = client_repos.client_id
-    AND client_users.user_id = auth.uid()
+    AND client_users.user_id = (SELECT auth.uid())
   ));
 
 -- CLIENT_USERS RLS
 CREATE POLICY "Admins can manage client users"
   ON public.client_users FOR ALL
-  USING (has_role(auth.uid(), 'admin'))
-  WITH CHECK (has_role(auth.uid(), 'admin'));
+  USING (has_role((SELECT auth.uid()), 'admin'))
+  WITH CHECK (has_role((SELECT auth.uid()), 'admin'));
 
 CREATE POLICY "Users can view own client memberships"
   ON public.client_users FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 -- Add updated_at triggers
 CREATE TRIGGER update_clients_updated_at

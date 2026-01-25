@@ -53,9 +53,16 @@ export function GitHubImportSheet({ trigger }: GitHubImportSheetProps) {
   const cancelImportRef = useRef(false);
 
   const { installations, repositories, loading, error, fetchInstallations, fetchRepositories } = useGitHubApp();
-  const { user } = useAuth();
+  const { user, currentOrganization, organizations, setCurrentOrganization, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Ensure currentOrganization is set - use first org if available
+  useEffect(() => {
+    if (!currentOrganization && organizations.length > 0) {
+      setCurrentOrganization(organizations[0]);
+    }
+  }, [currentOrganization, organizations, setCurrentOrganization]);
 
   useEffect(() => {
     if (open && step === 'select-installation') {
@@ -129,6 +136,13 @@ export function GitHubImportSheet({ trigger }: GitHubImportSheetProps) {
   const handleImport = async () => {
     if (selectedRepos.size === 0) return;
 
+    // Get organization to use if available - prefer currentOrganization, fallback to first available
+    let orgToUse = currentOrganization;
+    if (!orgToUse && organizations.length > 0) {
+      orgToUse = organizations[0];
+      setCurrentOrganization(orgToUse);
+    }
+
     setStep('importing');
     setFailedRepos([]);
     setImportedRepos([]);
@@ -147,7 +161,7 @@ export function GitHubImportSheet({ trigger }: GitHubImportSheetProps) {
         const colors = ['bg-primary', 'bg-success', 'bg-warning', 'bg-danger', 'bg-blue-500', 'bg-purple-500', 'bg-pink-500'];
         const colorIndex = repo.name.charCodeAt(0) % colors.length;
 
-        const { error: insertError } = await supabase.from('repositories').insert({
+        const insertData: Record<string, unknown> = {
           github_repo_id: repo.id,
           name: repo.name,
           full_name: repo.full_name,
@@ -161,7 +175,14 @@ export function GitHubImportSheet({ trigger }: GitHubImportSheetProps) {
           language: repo.language,
           stars_count: repo.stargazers_count,
           created_by: user?.id,
-        });
+        };
+
+        // Only add organization_id if we have one
+        if (orgToUse?.id) {
+          insertData.organization_id = orgToUse.id;
+        }
+
+        const { error: insertError } = await supabase.from('repositories').insert(insertData);
 
         if (insertError) {
           if (insertError.code === '23505') {
@@ -216,6 +237,13 @@ export function GitHubImportSheet({ trigger }: GitHubImportSheetProps) {
   };
 
   const handleRetryFailed = async () => {
+    // Get organization to use if available
+    let orgToUse = currentOrganization;
+    if (!orgToUse && organizations.length > 0) {
+      orgToUse = organizations[0];
+      setCurrentOrganization(orgToUse);
+    }
+
     const reposToRetry = failedRepos.map(f => f.repo);
     setFailedRepos([]);
     setStep('importing');
@@ -234,7 +262,7 @@ export function GitHubImportSheet({ trigger }: GitHubImportSheetProps) {
         const colors = ['bg-primary', 'bg-success', 'bg-warning', 'bg-danger', 'bg-blue-500', 'bg-purple-500', 'bg-pink-500'];
         const colorIndex = repo.name.charCodeAt(0) % colors.length;
 
-        const { error: insertError } = await supabase.from('repositories').insert({
+        const insertData: Record<string, unknown> = {
           github_repo_id: repo.id,
           name: repo.name,
           full_name: repo.full_name,
@@ -248,7 +276,14 @@ export function GitHubImportSheet({ trigger }: GitHubImportSheetProps) {
           language: repo.language,
           stars_count: repo.stargazers_count,
           created_by: user?.id,
-        });
+        };
+
+        // Only add organization_id if we have one
+        if (orgToUse?.id) {
+          insertData.organization_id = orgToUse.id;
+        }
+
+        const { error: insertError } = await supabase.from('repositories').insert(insertData);
 
         if (insertError) {
           if (insertError.code === '23505') {

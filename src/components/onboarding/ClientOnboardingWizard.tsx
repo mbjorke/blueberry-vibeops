@@ -206,12 +206,31 @@ export function ClientOnboardingWizard({ open, onOpenChange }: ClientOnboardingW
 
       setCreatedProjectId(client.id);
 
+      // Add the creator to the organization as an org admin (if not already a member)
+      const { error: clientUserError } = await supabase
+        .from('client_users')
+        .insert({
+          client_id: client.id,
+          user_id: user.id,
+          is_org_admin: true,
+          role: 'admin',
+        })
+        .select()
+        .single();
+
+      // Ignore error if user is already a member (unique constraint violation)
+      if (clientUserError && clientUserError.code !== '23505') {
+        console.warn('Failed to add creator to organization:', clientUserError);
+        // Don't throw - client was created successfully, this is just a warning
+      }
+
       // Send invitation to client
       const { error: inviteError } = await supabase.functions.invoke('send-invitation', {
         body: {
           email: clientData.email,
           invitedBy: user.id,
           assignedProjects: [client.id], // Now represents client access
+          organizationId: client.id, // Pass organization ID for multi-tenant support
         },
       });
 
@@ -677,9 +696,9 @@ export function ClientOnboardingWizard({ open, onOpenChange }: ClientOnboardingW
               {createdProjectId && (
                 <Button onClick={() => {
                   handleClose();
-                  navigate(`/project/${createdProjectId}`);
+                  navigate(`/clients`);
                 }}>
-                  View Project
+                  View Clients
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               )}

@@ -53,8 +53,8 @@ ALTER TABLE public.gdpr_checklist_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can manage all security findings"
 ON public.security_findings
 FOR ALL
-USING (has_role(auth.uid(), 'admin'::app_role))
-WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
+USING (has_role((SELECT auth.uid()), 'admin'::app_role))
+WITH CHECK (has_role((SELECT auth.uid()), 'admin'::app_role));
 
 CREATE POLICY "Clients can view security findings for assigned projects"
 ON public.security_findings
@@ -63,7 +63,7 @@ USING (
   EXISTS (
     SELECT 1 FROM client_projects
     WHERE client_projects.project_id = security_findings.project_id::text
-    AND client_projects.user_id = auth.uid()
+    AND client_projects.user_id = (SELECT auth.uid())
   )
 );
 
@@ -71,8 +71,8 @@ USING (
 CREATE POLICY "Admins can manage all deployments"
 ON public.deployments
 FOR ALL
-USING (has_role(auth.uid(), 'admin'::app_role))
-WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
+USING (has_role((SELECT auth.uid()), 'admin'::app_role))
+WITH CHECK (has_role((SELECT auth.uid()), 'admin'::app_role));
 
 CREATE POLICY "Clients can view deployments for assigned projects"
 ON public.deployments
@@ -81,7 +81,7 @@ USING (
   EXISTS (
     SELECT 1 FROM client_projects
     WHERE client_projects.project_id = deployments.project_id::text
-    AND client_projects.user_id = auth.uid()
+    AND client_projects.user_id = (SELECT auth.uid())
   )
 );
 
@@ -89,8 +89,8 @@ USING (
 CREATE POLICY "Admins can manage all GDPR items"
 ON public.gdpr_checklist_items
 FOR ALL
-USING (has_role(auth.uid(), 'admin'::app_role))
-WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
+USING (has_role((SELECT auth.uid()), 'admin'::app_role))
+WITH CHECK (has_role((SELECT auth.uid()), 'admin'::app_role));
 
 CREATE POLICY "Clients can view GDPR items for assigned projects"
 ON public.gdpr_checklist_items
@@ -99,7 +99,7 @@ USING (
   EXISTS (
     SELECT 1 FROM client_projects
     WHERE client_projects.project_id = gdpr_checklist_items.project_id::text
-    AND client_projects.user_id = auth.uid()
+    AND client_projects.user_id = (SELECT auth.uid())
   )
 );
 

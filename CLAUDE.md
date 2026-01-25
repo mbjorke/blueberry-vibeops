@@ -160,7 +160,39 @@ Need to change to: "Admins can manage clients WHERE they are a member"
 - GitHub App for repository access
 - Edge function: `github-app-auth` (JWT auth, list repos)
 - Edge function: `github-create-issue` (create issues from findings)
+- Edge function: `github-app-webhook` (handles installation events)
 - Requires: `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY` secrets
+- Optional: `GITHUB_WEBHOOK_SECRET` for webhook signature verification
+
+### GitHub App Webhook URL
+
+**⚠️ Important Limitation**: GitHub Apps only support **one webhook URL** per app. You cannot configure different webhook URLs for different environments in a single GitHub App.
+
+**Environment-Specific Setup Options:**
+
+1. **Separate GitHub Apps** (Recommended for production):
+   - Create different GitHub Apps for each environment (dev, staging, prod)
+   - Each app can have its own webhook URL pointing to the appropriate Supabase project
+
+2. **Single App with Environment Detection**:
+   - Use one GitHub App with webhook URL pointing to your primary environment
+   - For local development, use tunneling (ngrok, smee.io, etc.) to forward webhooks
+
+3. **Current Setup**:
+   - **Lovable Cloud (Testing)**: `https://uhzcblzvebrxzpwlxptb.supabase.co/functions/v1/github-app-webhook`
+   - **Local Development**: `http://127.0.0.1:54321/functions/v1/github-app-webhook` (requires tunneling)
+   - **Production**: TBD (update webhook URL when production environment is ready)
+
+**Webhook Events Handled:**
+- `installation` events (created, deleted, suspend, unsuspend)
+- `installation_repositories` events (repositories added/removed)
+
+**For Local Development with Tunneling:**
+```bash
+# Using ngrok (example)
+ngrok http 54321
+# Then use the ngrok URL in GitHub App webhook settings
+```
 
 ## Environment Variables
 
@@ -184,6 +216,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=<anon_key>
 - `RESEND_API_KEY` - Email sending
 - `GITHUB_APP_ID` - GitHub App ID
 - `GITHUB_APP_PRIVATE_KEY` - GitHub App private key
+- `GITHUB_WEBHOOK_SECRET` - (Optional) Webhook secret for signature verification
 
 ## Code Style
 

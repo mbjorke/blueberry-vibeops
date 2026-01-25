@@ -10,6 +10,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { GitHubImportSheet } from '@/components/github/GitHubImportSheet';
+import { GitHubConnectionManager } from '@/components/github/GitHubConnectionManager';
+import { ManualRepositoryAdd } from '@/components/github/ManualRepositoryAdd';
+import { BottomActionBar } from '@/components/dashboard/BottomActionBar';
+import { BulkActionBar } from '@/components/dashboard/BulkActionBar';
+import { Checkbox } from '@/components/ui/checkbox';
 import { 
   Search, 
   FolderGit2, 
@@ -45,6 +50,8 @@ export default function Repositories() {
   const { clients, isLoading: clientsLoading } = useClients();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedRepos, setSelectedRepos] = useState<Set<string>>(new Set());
 
   const assignedRepoIds = new Set(assignedRepos.map(r => r.id));
 
@@ -118,6 +125,36 @@ export default function Repositories() {
     } catch (err: any) {
       toast.error(err.message || 'Failed to assign repository');
     }
+  };
+
+  const handleSelectionChange = (repoId: string, selected: boolean) => {
+    setSelectedRepos(prev => {
+      const newSet = new Set(prev);
+      if (selected) {
+        newSet.add(repoId);
+      } else {
+        newSet.delete(repoId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedRepos.size === filteredRepos.length) {
+      setSelectedRepos(new Set());
+    } else {
+      setSelectedRepos(new Set(filteredRepos.map(r => r.id)));
+    }
+  };
+
+  const handleCancelSelection = () => {
+    setSelectionMode(false);
+    setSelectedRepos(new Set());
+  };
+
+  const handleBulkDeleteComplete = () => {
+    setSelectionMode(false);
+    setSelectedRepos(new Set());
   };
 
   const pageTitle = canManage ? 'Repositories' : 'Your Repositories';
@@ -248,14 +285,36 @@ export default function Repositories() {
       title={pageTitle} 
       subtitle={pageSubtitle}
       actions={
-        <GitHubImportSheet 
-          trigger={
-            <Button>
-              <Github className="h-4 w-4 mr-2" />
-              Import Repositories
-            </Button>
-          }
-        />
+        <div className="flex items-center gap-2">
+          {canManage && (
+            <GitHubConnectionManager 
+              trigger={
+                <Button variant="outline" size="sm">
+                  <Github className="h-4 w-4 mr-2" />
+                  Manage Connections
+                </Button>
+              }
+            />
+          )}
+          {canManage && (
+            <ManualRepositoryAdd 
+              trigger={
+                <Button variant="outline" size="sm">
+                  <Github className="h-4 w-4 mr-2" />
+                  Add Manually
+                </Button>
+              }
+            />
+          )}
+          <GitHubImportSheet 
+            trigger={
+              <Button>
+                <Github className="h-4 w-4 mr-2" />
+                Import Repositories
+              </Button>
+            }
+          />
+        </div>
       }
     >
       <div className="space-y-6">
@@ -317,6 +376,20 @@ export default function Repositories() {
               <SelectItem value="unassigned">Unassigned</SelectItem>
             </SelectContent>
           </Select>
+          {canManage && (
+            <Button
+              variant={selectionMode ? "default" : "outline"}
+              onClick={() => {
+                if (selectionMode) {
+                  handleCancelSelection();
+                } else {
+                  setSelectionMode(true);
+                }
+              }}
+            >
+              {selectionMode ? "Cancel Selection" : "Select Repositories"}
+            </Button>
+          )}
         </div>
 
         {/* Repositories Table */}
@@ -340,17 +413,33 @@ export default function Repositories() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    {selectionMode && (
+                      <TableHead className="w-12">
+                        <Checkbox
+                          checked={selectedRepos.size === filteredRepos.length && filteredRepos.length > 0}
+                          onCheckedChange={handleSelectAll}
+                        />
+                      </TableHead>
+                    )}
                     <TableHead>Repository</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Security</TableHead>
                     <TableHead>Last Deploy</TableHead>
                     <TableHead>Assignment</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    {!selectionMode && <TableHead className="text-right">Actions</TableHead>}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredRepos.map((repo) => (
                     <TableRow key={repo.id}>
+                      {selectionMode && (
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedRepos.has(repo.id)}
+                            onCheckedChange={(checked) => handleSelectionChange(repo.id, checked === true)}
+                          />
+                        </TableCell>
+                      )}
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
@@ -396,20 +485,22 @@ export default function Repositories() {
                           </Select>
                         )}
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          {repo.github_url && (
-                            <Button variant="ghost" size="icon" asChild>
-                              <a href={repo.github_url} target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="h-4 w-4" />
-                              </a>
+                      {!selectionMode && (
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {repo.github_url && (
+                              <Button variant="ghost" size="icon" asChild>
+                                <a href={repo.github_url} target="_blank" rel="noopener noreferrer">
+                                  <ExternalLink className="h-4 w-4" />
+                                </a>
+                              </Button>
+                            )}
+                            <Button variant="ghost" size="sm" onClick={() => navigate(`/project/${repo.id}`)}>
+                              View Details
                             </Button>
-                          )}
-                          <Button variant="ghost" size="sm" onClick={() => navigate(`/project/${repo.id}`)}>
-                            View Details
-                          </Button>
-                        </div>
-                      </TableCell>
+                          </div>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -417,7 +508,22 @@ export default function Repositories() {
             )}
           </CardContent>
         </Card>
+
+        {/* Bottom Action Bar - Import repositories */}
+        {canManage && !selectionMode && <BottomActionBar />}
       </div>
+
+      {/* Bulk Action Bar */}
+      {selectionMode && canManage && (
+        <BulkActionBar
+          selectedCount={selectedRepos.size}
+          totalCount={filteredRepos.length}
+          selectedIds={Array.from(selectedRepos)}
+          onSelectAll={handleSelectAll}
+          onCancel={handleCancelSelection}
+          onComplete={handleBulkDeleteComplete}
+        />
+      )}
     </AppLayout>
   );
 }

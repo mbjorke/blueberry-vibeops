@@ -9,6 +9,6 @@ RETURNS BOOLEAN AS $$
     WHERE user_id = p_user_id 
     AND role = 'superadmin'
   )
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 
 COMMENT ON FUNCTION is_superadmin IS 'Checks if user has superadmin role (platform owner)';

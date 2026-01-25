@@ -20,6 +20,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName: string, companyName?: string) => Promise<{ error: Error | null; data: { user: User | null } | null }>;
   signOut: () => Promise<void>;
+  signInAsMock: (mockUser: User, mockRole: AppRole, mockOrgs?: Organization[]) => Promise<void>;
   isAdmin: boolean;
   isSuperAdmin: boolean;
   isOrgAdmin: boolean;
@@ -91,9 +92,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Check for mock session first (dev mode only)
+    if (import.meta.env.DEV) {
+      const mockSessionData = localStorage.getItem('sb-mock-session');
+      if (mockSessionData) {
+        try {
+          const { session, role, organizations } = JSON.parse(mockSessionData);
+          setSession(session);
+          setUser(session.user);
+          setRole(role);
+          setOrganizations(organizations);
+          if (organizations.length > 0) {
+            setCurrentOrganization(organizations[0]);
+          }
+          setLoading(false);
+          return; // Skip Supabase auth if using mock session
+        } catch (e) {
+          // Invalid mock session, continue with normal auth
+          localStorage.removeItem('sb-mock-session');
+        }
+      }
+    }
+
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        // Don't override if we have a mock session
+        if (import.meta.env.DEV && localStorage.getItem('sb-mock-session')) {
+          return;
+        }
+
         setSession(session);
         setUser(session?.user ?? null);
 
@@ -123,6 +151,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Then get initial session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      // Don't override if we have a mock session
+      if (import.meta.env.DEV && localStorage.getItem('sb-mock-session')) {
+        return;
+      }
+
       setSession(session);
       setUser(session?.user ?? null);
 
@@ -169,10 +202,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    // Clear mock session if it exists
+    if (import.meta.env.DEV) {
+      localStorage.removeItem('sb-mock-session');
+    }
     await supabase.auth.signOut();
     setRole(null);
     setOrganizations([]);
     setCurrentOrganization(null);
+  };
+
+  const signInAsMock = async (mockUser: User, mockRole: AppRole, mockOrgs: Organization[] = []) => {
+    // Create a mock session
+    const mockSession: Session = {
+      access_token: 'mock-token',
+      refresh_token: 'mock-refresh-token',
+      expires_in: 3600,
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
+      token_type: 'bearer',
+      user: mockUser,
+    };
+
+    // Set the mock session directly in state (bypassing Supabase)
+    setSession(mockSession);
+    setUser(mockUser);
+    setRole(mockRole);
+    setOrganizations(mockOrgs);
+    
+    if (mockOrgs.length > 0) {
+      setCurrentOrganization(mockOrgs[0]);
+    }
+
+    // Also set in localStorage so it persists
+    localStorage.setItem('sb-mock-session', JSON.stringify({
+      session: mockSession,
+      role: mockRole,
+      organizations: mockOrgs,
+    }));
+
+    setLoading(false);
   };
 
   // Computed permission flags
@@ -188,6 +256,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signIn,
     signUp,
     signOut,
+    signInAsMock,
     isAdmin,
     isSuperAdmin,
     isOrgAdmin,

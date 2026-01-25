@@ -11,7 +11,7 @@ DO $$ BEGIN
   DROP POLICY IF EXISTS "Anyone can create validations" ON public.coupon_validations;
   CREATE POLICY "Authenticated users can create validations"
   ON public.coupon_validations FOR INSERT
-  WITH CHECK (auth.uid() IS NOT NULL);
+  WITH CHECK ((SELECT auth.uid()) IS NOT NULL);
 EXCEPTION
   WHEN undefined_table THEN null;
 END $$;
@@ -21,7 +21,7 @@ DO $$ BEGIN
   DROP POLICY IF EXISTS "Users can create their own custom lists" ON public.custom_lists;
   CREATE POLICY "Users can create their own custom lists"
   ON public.custom_lists FOR INSERT
-  WITH CHECK (auth.uid()::text = user_id);
+  WITH CHECK ((SELECT auth.uid())::text = user_id);
 EXCEPTION
   WHEN undefined_table THEN null;
   WHEN undefined_column THEN null;
@@ -31,7 +31,7 @@ DO $$ BEGIN
   DROP POLICY IF EXISTS "Users can delete their own custom lists" ON public.custom_lists;
   CREATE POLICY "Users can delete their own custom lists"
   ON public.custom_lists FOR DELETE
-  USING (auth.uid()::text = user_id);
+  USING ((SELECT auth.uid())::text = user_id);
 EXCEPTION
   WHEN undefined_table THEN null;
   WHEN undefined_column THEN null;
@@ -41,8 +41,8 @@ DO $$ BEGIN
   DROP POLICY IF EXISTS "Users can update their own custom lists" ON public.custom_lists;
   CREATE POLICY "Users can update their own custom lists"
   ON public.custom_lists FOR UPDATE
-  USING (auth.uid()::text = user_id)
-  WITH CHECK (auth.uid()::text = user_id);
+  USING ((SELECT auth.uid())::text = user_id)
+  WITH CHECK ((SELECT auth.uid())::text = user_id);
 EXCEPTION
   WHEN undefined_table THEN null;
   WHEN undefined_column THEN null;
@@ -53,7 +53,7 @@ DO $$ BEGIN
   DROP POLICY IF EXISTS "Users can delete their own tool lists" ON public.user_tool_lists;
   CREATE POLICY "Users can delete their own tool lists"
   ON public.user_tool_lists FOR DELETE
-  USING (auth.uid()::text = user_id);
+  USING ((SELECT auth.uid())::text = user_id);
 EXCEPTION
   WHEN undefined_table THEN null;
   WHEN undefined_column THEN null;
@@ -63,7 +63,7 @@ DO $$ BEGIN
   DROP POLICY IF EXISTS "Users can insert their own tool lists" ON public.user_tool_lists;
   CREATE POLICY "Users can insert their own tool lists"
   ON public.user_tool_lists FOR INSERT
-  WITH CHECK (auth.uid()::text = user_id);
+  WITH CHECK ((SELECT auth.uid())::text = user_id);
 EXCEPTION
   WHEN undefined_table THEN null;
   WHEN undefined_column THEN null;
@@ -73,8 +73,8 @@ DO $$ BEGIN
   DROP POLICY IF EXISTS "Users can update their own tool lists" ON public.user_tool_lists;
   CREATE POLICY "Users can update their own tool lists"
   ON public.user_tool_lists FOR UPDATE
-  USING (auth.uid()::text = user_id)
-  WITH CHECK (auth.uid()::text = user_id);
+  USING ((SELECT auth.uid())::text = user_id)
+  WITH CHECK ((SELECT auth.uid())::text = user_id);
 EXCEPTION
   WHEN undefined_table THEN null;
   WHEN undefined_column THEN null;
