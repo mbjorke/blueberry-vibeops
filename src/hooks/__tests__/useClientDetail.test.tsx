@@ -10,11 +10,34 @@ vi.mock('@/integrations/supabase/client', () => {
     const mockQuery = {
       select: vi.fn(() => mockQuery),
       insert: vi.fn(() => mockQuery),
-      update: vi.fn(() => mockQuery),
-      delete: vi.fn(() => mockQuery),
+      update: vi.fn((data: any) => {
+        // update() returns a chainable builder
+        const updateBuilder: any = {
+          eq: vi.fn((key: string) => {
+            // First eq() returns builder for chaining
+            return {
+              eq: vi.fn(async () => ({ error: null })),
+            };
+          }),
+        };
+        return updateBuilder;
+      }),
+      delete: vi.fn(() => {
+        // delete() returns a chainable builder
+        const deleteBuilder: any = {
+          eq: vi.fn((key: string) => {
+            // First eq() returns builder for chaining
+            return {
+              eq: vi.fn(async () => ({ error: null })),
+            };
+          }),
+        };
+        return deleteBuilder;
+      }),
       eq: vi.fn(() => mockQuery),
       in: vi.fn(() => mockQuery),
       single: vi.fn(async () => ({ data: null, error: null })),
+      maybeSingle: vi.fn(async () => ({ data: null, error: null })),
     };
     return mockQuery;
   });
@@ -52,6 +75,54 @@ const createWrapper = () => {
   return ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+};
+
+// Helper to create a complete mock query builder with both query and mutation methods
+const createMockQueryBuilder = (config?: {
+  single?: { data: any; error: any };
+  array?: { data: any[]; error: any };
+  inArray?: { data: any[]; error: any };
+}) => {
+  const mockBuilder: any = {
+    select: vi.fn(() => {
+      const selectBuilder: any = {
+        eq: vi.fn((key: string) => {
+          // For .single() queries (like clients table) - eq() returns builder with single()
+          if (config?.single) {
+            return {
+              single: vi.fn(async () => config.single),
+            };
+          }
+          // For array queries (like client_users, client_repos) - eq() returns awaitable promise
+          if (config?.array) {
+            return Promise.resolve(config.array);
+          }
+          // Default: return awaitable empty array
+          return Promise.resolve({ data: [], error: null });
+        }),
+        in: vi.fn(async () => {
+          // For .in() queries (like profiles, repositories)
+          // Note: async function already returns a promise, so just return the value
+          if (config?.inArray) {
+            return config.inArray;
+          }
+          return { data: [], error: null };
+        }),
+      };
+      return selectBuilder;
+    }),
+    delete: vi.fn(() => ({
+      eq: vi.fn((key: string) => ({
+        eq: vi.fn(async () => ({ error: null })),
+      })),
+    })),
+    update: vi.fn((data: any) => ({
+      eq: vi.fn((key: string) => ({
+        eq: vi.fn(async () => ({ error: null })),
+      })),
+    })),
+  };
+  return mockBuilder;
 };
 
 describe('useClientDetail', () => {
@@ -159,7 +230,8 @@ describe('useClientDetail', () => {
         expect(result.current.isLoading).toBe(false);
       }, { timeout: 1000 });
 
-      expect(result.current.client).toBeNull();
+      // When clientId is undefined, query is disabled so client should be undefined
+      expect(result.current.client).toBeUndefined();
       expect(result.current.users).toEqual([]);
       expect(result.current.repos).toEqual([]);
     });
@@ -196,62 +268,37 @@ describe('useClientDetail', () => {
       const { supabase } = await import('@/integrations/supabase/client');
       const mockFrom = supabase.from as any;
 
-      // Mock client query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            single: vi.fn(async () => ({
-              data: { id: 'client-1', name: 'Test Client' },
+      // Use mockImplementation to handle calls by table name (order-independent)
+      mockFrom.mockImplementation((table: string) => {
+        if (table === 'clients') {
+          return createMockQueryBuilder({
+            single: { data: { id: 'client-1', name: 'Test Client' }, error: null },
+          });
+        }
+        if (table === 'client_users') {
+          return createMockQueryBuilder({
+            array: {
+              data: [
+                { id: 'cu-1', user_id: 'user-1', client_id: 'client-1' },
+                { id: 'cu-2', user_id: 'user-2', client_id: 'client-1' },
+              ],
               error: null,
-            })),
-          })),
-        })),
-      });
-
-      // Mock client_users query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [
-              { id: 'cu-1', user_id: 'user-1', client_id: 'client-1' },
-              { id: 'cu-2', user_id: 'user-2', client_id: 'client-1' },
-            ],
-            error: null,
-          })),
-        })),
-      });
-
-      // Mock profiles query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [
-              { user_id: 'user-1', email: 'user1@test.com', full_name: 'User 1' },
-              { user_id: 'user-2', email: 'user2@test.com', full_name: 'User 2' },
-            ],
-            error: null,
-          })),
-        })),
-      });
-
-      // Mock client_repos query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      // Mock repositories query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
+            },
+          });
+        }
+        if (table === 'profiles') {
+          return createMockQueryBuilder({
+            inArray: {
+              data: [
+                { user_id: 'user-1', email: 'user1@test.com', full_name: 'User 1' },
+                { user_id: 'user-2', email: 'user2@test.com', full_name: 'User 2' },
+              ],
+              error: null,
+            },
+          });
+        }
+        // Empty for repos queries
+        return createMockQueryBuilder();
       });
 
       const { result } = renderHook(() => useClientDetail('client-1'), {
@@ -273,70 +320,45 @@ describe('useClientDetail', () => {
       const { supabase } = await import('@/integrations/supabase/client');
       const mockFrom = supabase.from as any;
 
-      // Mock client query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            single: vi.fn(async () => ({
-              data: { id: 'client-1', name: 'Test Client' },
+      // Use mockImplementation to handle calls by table name (order-independent)
+      mockFrom.mockImplementation((table: string) => {
+        if (table === 'clients') {
+          return createMockQueryBuilder({
+            single: { data: { id: 'client-1', name: 'Test Client' }, error: null },
+          });
+        }
+        if (table === 'client_repos') {
+          return createMockQueryBuilder({
+            array: {
+              data: [
+                { id: 'cr-1', repo_id: 'repo-1', client_id: 'client-1' },
+              ],
               error: null,
-            })),
-          })),
-        })),
-      });
-
-      // Mock client_users query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      // Mock profiles query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      // Mock client_repos query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [
-              { id: 'cr-1', repo_id: 'repo-1', client_id: 'client-1' },
-            ],
-            error: null,
-          })),
-        })),
-      });
-
-      // Mock repositories query
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [
-              {
-                id: 'repo-1',
-                name: 'Test Repo',
-                full_name: 'test/repo',
-                description: 'Test description',
-                github_url: 'https://github.com/test/repo',
-                status: 'healthy',
-                security_score: 95,
-                last_deploy: '2024-01-15T10:00:00Z',
-                language: 'TypeScript',
-              },
-            ],
-            error: null,
-          })),
-        })),
+            },
+          });
+        }
+        if (table === 'repositories') {
+          return createMockQueryBuilder({
+            inArray: {
+              data: [
+                {
+                  id: 'repo-1',
+                  name: 'Test Repo',
+                  full_name: 'test/repo',
+                  description: 'Test description',
+                  github_url: 'https://github.com/test/repo',
+                  status: 'healthy',
+                  security_score: 95,
+                  last_deploy: '2024-01-15T10:00:00Z',
+                  language: 'TypeScript',
+                },
+              ],
+              error: null,
+            },
+          });
+        }
+        // Empty for users queries
+        return createMockQueryBuilder();
       });
 
       const { result } = renderHook(() => useClientDetail('client-1'), {
@@ -357,53 +379,16 @@ describe('useClientDetail', () => {
       const { supabase } = await import('@/integrations/supabase/client');
       const mockFrom = supabase.from as any;
 
-      // Mock initial queries
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            single: vi.fn(async () => ({
-              data: { id: 'client-1' },
-              error: null,
-            })),
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
+      // Setup queries first (5 calls)
+      mockFrom.mockReturnValueOnce(
+        createMockQueryBuilder({
+          single: { data: { id: 'client-1' }, error: null },
+        })
+      );
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // client_users
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // profiles
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // client_repos
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // repositories
 
       const { result } = renderHook(() => useClientDetail('client-1'), {
         wrapper: createWrapper(),
@@ -413,17 +398,12 @@ describe('useClientDetail', () => {
         expect(result.current.isLoading).toBe(false);
       }, { timeout: 3000 });
 
-      // Mock delete mutation
-      mockFrom.mockReturnValueOnce({
-        delete: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            eq: vi.fn(async () => ({ error: null })),
-          })),
-        })),
-      });
+      // Mutation call - should use the default mock (6th call)
+      // Add one more mockReturnValueOnce for the mutation
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder());
 
       await result.current.removeUser.mutateAsync('user-1');
-
+      
       expect(mockFrom).toHaveBeenCalledWith('client_users');
     });
 
@@ -431,53 +411,16 @@ describe('useClientDetail', () => {
       const { supabase } = await import('@/integrations/supabase/client');
       const mockFrom = supabase.from as any;
 
-      // Mock initial queries
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            single: vi.fn(async () => ({
-              data: { id: 'client-1' },
-              error: null,
-            })),
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
+      // Setup queries first (5 calls)
+      mockFrom.mockReturnValueOnce(
+        createMockQueryBuilder({
+          single: { data: { id: 'client-1' }, error: null },
+        })
+      );
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // client_users
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // profiles
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // client_repos
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // repositories
 
       const { result } = renderHook(() => useClientDetail('client-1'), {
         wrapper: createWrapper(),
@@ -487,16 +430,12 @@ describe('useClientDetail', () => {
         expect(result.current.isLoading).toBe(false);
       }, { timeout: 3000 });
 
-      // Mock delete mutation
-      mockFrom.mockReturnValueOnce({
-        delete: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            eq: vi.fn(async () => ({ error: null })),
-          })),
-        })),
-      });
+      // Mutation call - add one more mockReturnValueOnce
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder());
 
       await result.current.unassignRepo.mutateAsync('repo-1');
+      
+      expect(mockFrom).toHaveBeenCalledWith('client_repos');
 
       expect(mockFrom).toHaveBeenCalledWith('client_repos');
     });
@@ -505,53 +444,16 @@ describe('useClientDetail', () => {
       const { supabase } = await import('@/integrations/supabase/client');
       const mockFrom = supabase.from as any;
 
-      // Mock initial queries
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            single: vi.fn(async () => ({
-              data: { id: 'client-1' },
-              error: null,
-            })),
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
-
-      mockFrom.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          in: vi.fn(async () => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      });
+      // Setup queries first (5 calls)
+      mockFrom.mockReturnValueOnce(
+        createMockQueryBuilder({
+          single: { data: { id: 'client-1' }, error: null },
+        })
+      );
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // client_users
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // profiles
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // client_repos
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder()); // repositories
 
       const { result } = renderHook(() => useClientDetail('client-1'), {
         wrapper: createWrapper(),
@@ -561,14 +463,12 @@ describe('useClientDetail', () => {
         expect(result.current.isLoading).toBe(false);
       }, { timeout: 3000 });
 
-      // Mock update mutation
-      mockFrom.mockReturnValueOnce({
-        update: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            eq: vi.fn(async () => ({ error: null })),
-          })),
-        })),
-      });
+      // Mutation call - add one more mockReturnValueOnce
+      mockFrom.mockReturnValueOnce(createMockQueryBuilder());
+
+      await result.current.updateUserRole.mutateAsync({ userId: 'user-1', role: 'admin' });
+      
+      expect(mockFrom).toHaveBeenCalledWith('client_users');
 
       await result.current.updateUserRole.mutateAsync({
         userId: 'user-1',
