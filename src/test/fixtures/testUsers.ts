@@ -1,12 +1,18 @@
 /**
- * Test User Credentials
+ * Test User Credentials (Database Users)
  * 
- * These are real test users created in the database via seed script.
- * Use these for integration tests that need actual database records.
+ * These are REAL test users created in the database via seed script.
+ * Use these for:
+ * - Integration tests (test real auth flows, RLS policies, etc.)
+ * - End-to-end testing
+ * - Manual testing with known credentials
  * 
  * To create these users, run: npm run seed:test-users
  * 
+ * ⚠️ For unit tests (fast, isolated), use mock users from '@/test/fixtures/users' instead.
  * ⚠️ These are TEST users only - never use in production!
+ * 
+ * @see users.ts for mock users (unit tests, dev mode)
  */
 
 export const TEST_USER_CREDENTIALS = {

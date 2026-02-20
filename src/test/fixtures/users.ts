@@ -1,3 +1,16 @@
+/**
+ * Mock Users for Unit Tests and Dev Mode
+ * 
+ * These are static mock objects used for:
+ * - Unit tests (fast, no database required)
+ * - Dev mode quick login (MockLogin component)
+ * 
+ * ⚠️ For integration tests that need real database records,
+ * use test users from '@/test/fixtures/testUsers' instead.
+ * 
+ * @see testUsers.ts for real database test users
+ */
+
 import type { User } from '@supabase/supabase-js';
 
 export const mockAdminUser: User = {
