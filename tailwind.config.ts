@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -13,6 +14,11 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["Barlow", "Inter", "system-ui", "sans-serif"],
+        display: ["Barlow", "Inter", "system-ui", "sans-serif"],
+        mono: ["IBM Plex Mono", "ui-monospace", "SFMono-Regular", "monospace"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -76,6 +82,10 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        panel: "0 10px 24px rgba(10, 8, 24, 0.34)",
+        "panel-hover": "0 16px 34px rgba(10, 8, 24, 0.48)",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -92,5 +102,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animate],
 } satisfies Config;

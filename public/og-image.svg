@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Blueberry VibeOps">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#120b1f"/>
+      <stop offset="100%" stop-color="#1a1230"/>
+    </linearGradient>
+    <linearGradient id="berry" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b66bff"/>
+      <stop offset="100%" stop-color="#ff75b8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="72" y="72" width="96" height="96" rx="24" fill="url(#berry)"/>
+  <text x="120" y="138" text-anchor="middle" fill="#120b1f" font-family="system-ui, sans-serif" font-size="48" font-weight="700">B</text>
+  <text x="200" y="118" fill="#f5ecff" font-family="system-ui, sans-serif" font-size="42" font-weight="700">Blueberry VibeOps</text>
+  <text x="200" y="176" fill="#c8b6e2" font-family="system-ui, sans-serif" font-size="30">Client operations for independent developers</text>
+  <text x="200" y="260" fill="#f5ecff" font-family="system-ui, sans-serif" font-size="52" font-weight="700">Keep client work clear,</text>
+  <text x="200" y="330" fill="#f5ecff" font-family="system-ui, sans-serif" font-size="52" font-weight="700">calm, and ready for the next move.</text>
+</svg>

@@ -95,7 +95,7 @@ const OpsGuide = () => {
   return (
     <AppLayout 
       title="VibeOps Guide" 
-      subtitle="Migration helper & integration roadmap for your team"
+      subtitle="Masterpan direction: migration helper and integration roadmap"
       actions={
         <Button onClick={() => setShowOnboardingWizard(true)}>
           <UserPlus className="mr-2 h-4 w-4" />
@@ -110,6 +110,44 @@ const OpsGuide = () => {
       />
 
       <div className="space-y-8">
+        <section className="masterpan-hero">
+          <div className="space-y-5">
+            <span className="masterpan-kicker">Masterpan presentation track</span>
+            <div className="space-y-2">
+              <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
+                From local-first prototype to production-safe operations
+              </h2>
+              <p className="text-muted-foreground max-w-3xl">
+                This guide now doubles as the presentation baseline for delivery conversations:
+                honest constraints, migration path, and concrete operational handoff steps.
+              </p>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3">
+              <div className="masterpan-step">
+                <p className="text-xs uppercase tracking-wide text-primary font-semibold mb-1">Step 1</p>
+                <p className="font-medium">Validate fit</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Confirm domain and compliance profile before committing to stack choices.
+                </p>
+              </div>
+              <div className="masterpan-step">
+                <p className="text-xs uppercase tracking-wide text-primary font-semibold mb-1">Step 2</p>
+                <p className="font-medium">Plan migration</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Use the checklist and schema detector to sequence safe environment cutovers.
+                </p>
+              </div>
+              <div className="masterpan-step">
+                <p className="text-xs uppercase tracking-wide text-primary font-semibold mb-1">Step 3</p>
+                <p className="font-medium">Operationalize</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Lock in monitoring, roles, and support expectations for long-term ownership.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Disclaimer Banner */}
         <Card className="border-warning/50 bg-warning/5">
           <CardContent className="pt-6">
