@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   deploy-preview:
     name: Deploy Preview to Vercel
@@ -45,7 +49,6 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
           working-directory: ./
 
       - name: Skip Vercel deploy

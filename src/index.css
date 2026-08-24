@@ -130,6 +130,7 @@
 @layer components {
   .masterpan-hero {
     @apply rounded-2xl border p-6 md:p-8;
+
     background:
       radial-gradient(120% 90% at 10% 0%, hsl(var(--primary) / 0.22) 0%, transparent 62%),
       radial-gradient(80% 60% at 90% 10%, hsl(var(--accent) / 0.16) 0%, transparent 62%),
@@ -140,6 +141,7 @@
 
   .masterpan-kicker {
     @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest;
+
     background: hsl(var(--primary) / 0.14);
     color: hsl(var(--primary));
     border: 1px solid hsl(var(--primary) / 0.38);
@@ -147,6 +149,7 @@
 
   .masterpan-step {
     @apply rounded-xl border p-4;
+
     background: hsl(var(--muted) / 0.24);
     border-color: hsl(var(--border));
   }
