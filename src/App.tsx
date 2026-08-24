@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import Index from "./pages/Index";
+import Landing from "./pages/Landing";
 import ProjectDetail from "./pages/ProjectDetail";
 import ProjectSettings from "./pages/ProjectSettings";
 import Login from "./pages/Login";
@@ -32,15 +33,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Redirect root to Clients (new admin home) */}
-            <Route 
-              path="/" 
-              element={
-                <ProtectedRoute requireAdmin>
-                  <Navigate to="/clients" replace />
-                </ProtectedRoute>
-              } 
-            />
+            <Route path="/" element={<Landing />} />
             <Route 
               path="/project/:projectId" 
               element={
