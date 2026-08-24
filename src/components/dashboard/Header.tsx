@@ -36,12 +36,12 @@ export function Header({ searchQuery, onSearchChange, projectCount }: HeaderProp
   };
 
   return (
-    <header className="bg-card border-b sticky top-0 z-50">
+    <header className="bg-card/95 backdrop-blur border-b sticky top-0 z-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <div className="flex items-center gap-3 flex-shrink-0">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center shadow-panel">
               <span className="text-primary-foreground font-bold text-sm">B</span>
             </div>
             <span className="font-semibold text-lg hidden sm:block">Blueberry VibeOps</span>
@@ -65,6 +65,9 @@ export function Header({ searchQuery, onSearchChange, projectCount }: HeaderProp
           <div className="flex items-center gap-3">
             <Badge variant="secondary" className="hidden sm:flex">
               {projectCount} Projects
+            </Badge>
+            <Badge className="hidden lg:flex bg-primary/15 text-primary border border-primary/35 hover:bg-primary/15">
+              Masterpan direction
             </Badge>
 
             {/* GitHub Connection Manager */}
